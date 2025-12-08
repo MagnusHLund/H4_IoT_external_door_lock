@@ -14,27 +14,25 @@ class MqttManager {
   const char* mqtt_password;
 
   public:
-    MQTT(const char* server_hostname, int server_port)
-      : client(wifiClient) {
-      this->server_hostname = server_hostname;
-      this->server_port = server_port;
-    }
+    MqttManager(const char* server_hostname, int server_port, const char* mqtt_username, const char* mqtt_password)
+      : client(wifiClient), server_hostname(server_hostname), server_port(server_port), mqtt_username(mqtt_username), mqtt_password(mqtt_password) {}
 
   public:
     void Connect() {
       client.setServer(server_hostname, server_port);
-      client.setCallback(callback);
     }
   
   public:
     void EnsureConnectivity() {
       while (!client.connected()) {
         Serial.print("Attempting MQTT connection...");
-        char* clientId = "ArduinoClient-" + String(random(0xffff), HEX);
+
+        String clientId = "ArduinoClient-";
+        clientId += String(random(0xffff), HEX);
 
         if (client.connect(clientId.c_str(), mqtt_username, mqtt_password)) {
           Serial.println("connected");
-          client.subscribe("radar/distance"); 
+          client.subscribe(command_topic); 
         } else {
           Serial.print("failed, rc=");
           Serial.print(client.state());
@@ -52,7 +50,7 @@ class MqttManager {
     }
   
   public:
-    void SetCallback(/* something here idk */) {
-
+    void SetCallback(void (*callback)(char* topic, byte* payload, unsigned int length)) {
+      client.setCallback(callback);
     }
 };

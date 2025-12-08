@@ -1,27 +1,55 @@
-#include <WiFi.h>
+#include <WiFiS3.h>
 
 class WiFiManager {
-  IPAddress local_IP(10, 101, 161, 42);     // Desired static IP
-  IPAddress dns_server(8, 8, 8, 8);         // Primary DNS
-  IPAddress gateway(10, 101, 161, 1);       // Router gateway
-  IPAddress subnet(255, 255, 0, 0);       // Subnet mask 
+  const char* wifi_ssid;
+  const char* wifi_password;
 
-  void setup_wifi() {
-  delay(10);
-  Serial.println("Connecting to WiFi...");
+  IPAddress local_IP;
+  IPAddress dns_server;
+  IPAddress gateway;
+  IPAddress subnet;
 
-  // Configure static IP (WiFiS3: returns void, not bool)
-  WiFi.config(local_IP, dns_server, gateway, subnet);
+  public:
+    WiFiManager(const char* wifi_ssid, const char* wifi_password, String local_IP, String gateway, String subnet, String dns_server = "1.1.1.1")
+      : wifi_ssid(wifi_ssid), wifi_password(wifi_password) {
+      if (!this->local_IP.fromString(local_IP)) {
+        Serial.println("Invalid static IP!");
+      }
+      if (!this->subnet.fromString(subnet)) {
+        Serial.println("Invalid subnet!");
+      }
+      if (!this->gateway.fromString(gateway)) {
+        Serial.println("Invalid gateway!");
+      }
+      if (!this->dns_server.fromString(dns_server)) {
+        Serial.println("Invalid DNS!");
+      }
+    }
 
-  WiFi.begin(ssid, password);
+  public:
+    void Connect() {
+      delay(10);
+      Serial.println("Connecting to WiFi...");
 
-  while (WiFi.status() != WL_CONNECTED) {
-    delay(500);
-    Serial.print(".");
-  }
+      WiFi.config(local_IP, dns_server, gateway, subnet);
 
-  Serial.println("\nWiFi connected.");
-  Serial.print("IP address: ");
-  Serial.println(WiFi.localIP());
-}
+      WiFi.begin(wifi_ssid, wifi_password);
+
+      while (WiFi.status() != WL_CONNECTED) {
+        delay(500);
+        Serial.print(".");
+      }
+
+      Serial.println("\nWiFi connected.");
+      Serial.print("IP address: ");
+      Serial.println(WiFi.localIP());
+    }
+
+  public:
+    void EnsureConnectivity() {
+      if (WiFi.status() != WL_CONNECTED) {
+        Serial.println("WiFi lost, reconnecting...");
+        Connect();
+      }
+    }
 };

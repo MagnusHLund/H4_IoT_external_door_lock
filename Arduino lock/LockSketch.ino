@@ -1,22 +1,32 @@
-//#include "Config.h"
-//#include "WiFiManager.h"
-//#include "MqttManager.h"
-#include <Servo.h>
+#include "Config.h"
+#include "WiFiManager.h"
+#include "MqttManager.h"
+#include "LockManager.h"
 
-  Servo servo;
+WiFiManager wiFiManager(WIFI_SSID, WIFI_PASSWORD, WIFI_STATIC_IP, WIFI_GATEWAY, WIFI_SUBNET_MASK, WIFI_DNS_SERVER);
+MqttManager mqttManager(MQTT_HOSTNAME, MQTT_PORT, MQTT_USERNAME, MQTT_PASSWORD);
 
-// --- Setup ---
+Motor motor(MOTOR_PIN);
+
+LockManager lockManager(motor, mqttManager);
+
+unsigned long lastCheck = 0;
+
 void setup() {
   Serial.begin(9600);
-  servo.attach(2);
+
+  wiFiManager.Connect();
+  mqttManager.Connect();
+
+  lockManager.Init();
 }
 
-// --- Main loop ---
 void loop() {
-  for(int i = 0; i > 180; i++) {
-    servo.write(i);
-  }
-    for(int i = 180; i < 180; i--) {
-    servo.write(i);
+  mqttManager.EnsureConnectivity();
+
+  // WiFi can be kept alive left often than MQTT
+  if (millis() - lastCheck > 5000) {
+    wiFiManager.EnsureConnectivity();
+    lastCheck = millis();
   }
 }
