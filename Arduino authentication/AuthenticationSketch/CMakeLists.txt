@@ -4,7 +4,7 @@ project(Magnussy_IoT_Project_Arduino_authentication)
 set(CMAKE_CXX_STANDARD 17)
 
 # ----------------------------------------------------------------------
-# Resolve Windows user paths
+# Windows paths
 # ----------------------------------------------------------------------
 set(USERPROFILE_PATH "$ENV{USERPROFILE}")
 set(LOCALAPPDATA_PATH "$ENV{LOCALAPPDATA}")
@@ -19,29 +19,39 @@ set(ARDUINO_HARDWARE_LIBRARIES_DIR "${ARDUINO_HARDWARE_ROOT}/libraries")
 # ----------------------------------------------------------------------
 # Project sources
 # ----------------------------------------------------------------------
-# For IntelliSense only: list your main sketch and any CPP files here
 set(SRC
         AuthenticationSketch.ino
+        WiFiManager.cpp
+        Include/WiFiManager.h
+        Include/MqttClient.h
+        MqttClient.cpp
 )
 
 # ----------------------------------------------------------------------
-# Library discovery
+# Collect all Arduino library "src" folders
 # ----------------------------------------------------------------------
-file(GLOB_RECURSE ARDUINO_LIB_SRC_DIRS "${ARDUINO_LIBRARIES_DIR}/*/src")
-file(GLOB_RECURSE ARDUINO_HARDWARE_LIB_SRC_DIRS "${ARDUINO_HARDWARE_LIBRARIES_DIR}/*/src")
-file(GLOB ARDUINO_LIB_WEBSOCKET "${ARDUINO_LIBRARIES_DIR}/ArduinoHttpClient/src")
+file(GLOB_RECURSE USER_LIB_SRC_DIRS "${ARDUINO_LIBRARIES_DIR}/*/src")
+file(GLOB_RECURSE HW_LIB_SRC_DIRS "${ARDUINO_HARDWARE_LIBRARIES_DIR}/*/src")
 
+# Add specific missing libs (PubSubClient, WiFiS3)
+set(PUBSUBCLIENT_DIR "${ARDUINO_LIBRARIES_DIR}/PubSubClient/src")
+set(ADC_HTTPCLIENT_DIR "${ARDUINO_LIBRARIES_DIR}/ArduinoHttpClient/src")
+set(WIFI_S3_DIR "${ARDUINO_HARDWARE_LIBRARIES_DIR}/WiFiS3/src")
+set(ARDUINO_API_DIR "${ARDUINO_CORE_DIR}/api")
 # ----------------------------------------------------------------------
 # Include dirs for IntelliSense
 # ----------------------------------------------------------------------
 include_directories(
         ${CMAKE_SOURCE_DIR}
-        ${CMAKE_SOURCE_DIR}/include
+        ${CMAKE_SOURCE_DIR}/Include
         ${ARDUINO_CORE_DIR}
         ${ARDUINO_VARIANT_DIR}
-        ${ARDUINO_LIB_SRC_DIRS}
-        ${ARDUINO_HARDWARE_LIB_SRC_DIRS}
-        ${ARDUINO_LIB_WEBSOCKET}
+        ${USER_LIB_SRC_DIRS}
+        ${HW_LIB_SRC_DIRS}
+        ${ARDUINO_API_DIR}
+        ${PUBSUBCLIENT_DIR}
+        ${ADC_HTTPCLIENT_DIR}
+        ${WIFI_S3_DIR}
 )
 
 # ----------------------------------------------------------------------
@@ -51,10 +61,10 @@ add_definitions(-DARDUINO=10813)
 add_definitions(-DARDUINO_ARCH_RENESAS)
 
 # ----------------------------------------------------------------------
-# IntelliSense target (dummy CPP ensures CMake can link)
+# IntelliSense dummy target
 # ----------------------------------------------------------------------
-file(WRITE "${CMAKE_BINARY_DIR}/dummy.cpp" "// Dummy file to let CMake determine link language")
+file(WRITE "${CMAKE_BINARY_DIR}/dummy.cpp" "// Dummy file to enable IntelliSense")
 add_executable(authentication
         "${CMAKE_BINARY_DIR}/dummy.cpp"
-        ${SRC}  # your .ino file for IntelliSense only
+        ${SRC}
 )
