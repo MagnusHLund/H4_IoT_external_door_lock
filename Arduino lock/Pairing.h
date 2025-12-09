@@ -29,15 +29,13 @@ class Pairing {
       char* mac_address = wiFiManager.GetMacAddress(true);
       char* message = formatDiscoveryMessageJson(mac_address);
 
-      char* discovery_topic = strdup(mqttManager.GetDiscoveryTopic()); 
-      mqttManager.PublishMessage(message, discovery_topic);
-
+      mqttManager.PublishMessage(message, mqttManager.GetDiscoveryTopic());
       Serial.println("Sent discovery message");
     }
 
   private:
     char* formatDiscoveryMessageJson(char* mac_address) {
-      StaticJsonDocument<300> doc;
+      StaticJsonDocument<512> doc;
 
       const char* command_topic = mqttManager.GetCommandTopic();
       const char* state_topic = mqttManager.GetStateTopic();
@@ -56,8 +54,7 @@ class Pairing {
       device["manufacturer"] = "Arduino";
       device["model"] = "Uno R4 WiFi";
 
-
-      static char buffer[256];
+      static char buffer[512];
       serializeJson(doc, buffer);
 
       return buffer;
