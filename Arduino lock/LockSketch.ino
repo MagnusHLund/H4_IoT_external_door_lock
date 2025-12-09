@@ -1,4 +1,5 @@
 #include "Config.h"
+#include "Button.h"
 #include <ArduinoJson.h>
 #include "WiFiManager.h"
 #include "MqttManager.h"
@@ -8,7 +9,8 @@
 WiFiManager wiFiManager(WIFI_SSID, WIFI_PASSWORD, WIFI_STATIC_IP, WIFI_GATEWAY, WIFI_SUBNET_MASK, WIFI_DNS_SERVER);
 MqttManager mqttManager(MQTT_HOSTNAME, MQTT_PORT, MQTT_USERNAME, MQTT_PASSWORD);
 
-Pairing pairing(wiFiManager, mqttManager);
+Button pairButton(PAIR_BUTTON_PIN);
+Pairing pairing(wiFiManager, mqttManager, pairButton);
 
 Motor motor(MOTOR_PIN);
 LockController lockController(motor, mqttManager);
@@ -25,6 +27,7 @@ void setup() {
   mqttManager.SetupTopics(mac_address);
 
   lockController.Init();
+  pairing.Init();
 }
 
 void loop() {
@@ -35,4 +38,6 @@ void loop() {
     wiFiManager.EnsureConnectivity();
     lastCheck = millis();
   }
+
+  pairing.HandlePairingButton();
 }

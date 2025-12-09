@@ -24,4 +24,7 @@ Fill in the following code:
 
 // Motor
 #define MOTOR_PIN 2
+
+// Button
+#define PAIR_BUTTON_PIN 3
 ```
