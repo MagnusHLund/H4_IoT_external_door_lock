@@ -2,8 +2,9 @@
 #include <ArduinoJson.h>
 
 class MqttManager {
-  const char* state_topic = "homeassistant/sensor/arduino/state"; // State of the Arduino
-  const char* command_topic = "homeassistant/sensor/arduino/command"; // State change from Home Assistant
+  const static char* state_topic; // State of the Arduino
+  const static char* command_topic; // State change from Home Assistant
+  const static char* discovery_topic; // Used for Home Assistant discovery
 
   WiFiClient wifiClient;
   PubSubClient client;
@@ -21,7 +22,38 @@ class MqttManager {
     void Connect() {
       client.setServer(server_hostname, server_port);
     }
-  
+
+  public:
+    void SetupTopics(const char* mac_address) {
+      static char state_topic[64];
+      static char command_topic[64];
+      static char discovery_topic[64];
+
+      sprintf(state_topic, "homeassistant/lock/%s/state", mac_address);
+      sprintf(command_topic, "homeassistant/lock/%s/set", mac_address);
+      sprintf(discovery_topic, "homeassistant/lock/%s/config", mac_address);
+
+      // assign to your class members
+      this->state_topic     = state_topic;
+      this->command_topic   = command_topic;
+      this->discovery_topic = discovery_topic;
+    }
+
+  public:
+    const char* GetDiscoveryTopic() {
+      return discovery_topic;
+    }
+
+  public:
+    const char* GetStateTopic() {
+      return state_topic;
+    }
+
+  public:
+    const char* GetCommandTopic() {
+      return command_topic;
+    }
+
   public:
     void EnsureConnectivity() {
       while (!client.connected()) {
@@ -44,9 +76,13 @@ class MqttManager {
     }
 
   public:
-    void PublishMessage(const char* message) {
+    void PublishMessage(const char* message, const char* topic = nullptr) {
+      if(topic == nullptr) {
+        topic = state_topic;
+      }
+
       Serial.println(message);
-      client.publish(state_topic, message);
+      client.publish(topic, message);
     }
   
   public:
@@ -54,3 +90,7 @@ class MqttManager {
       client.setCallback(callback);
     }
 };
+
+const char* MqttManager::state_topic = nullptr;
+const char* MqttManager::command_topic = nullptr;
+const char* MqttManager::discovery_topic = nullptr;

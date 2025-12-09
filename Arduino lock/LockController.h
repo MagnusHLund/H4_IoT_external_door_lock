@@ -1,6 +1,5 @@
 #include "Motor.h"
 #include "LockCommand.h"
-#include <ArduinoJson.h>
 
 class LockController {
   static LockController* instance;

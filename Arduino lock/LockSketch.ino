@@ -1,13 +1,16 @@
 #include "Config.h"
+#include <ArduinoJson.h>
 #include "WiFiManager.h"
 #include "MqttManager.h"
 #include "LockController.h"
+#include "Pairing.h"
 
 WiFiManager wiFiManager(WIFI_SSID, WIFI_PASSWORD, WIFI_STATIC_IP, WIFI_GATEWAY, WIFI_SUBNET_MASK, WIFI_DNS_SERVER);
 MqttManager mqttManager(MQTT_HOSTNAME, MQTT_PORT, MQTT_USERNAME, MQTT_PASSWORD);
 
-Motor motor(MOTOR_PIN);
+Pairing pairing(wiFiManager, mqttManager);
 
+Motor motor(MOTOR_PIN);
 LockController lockController(motor, mqttManager);
 
 unsigned long lastCheck = 0;
@@ -17,6 +20,9 @@ void setup() {
 
   wiFiManager.Connect();
   mqttManager.Connect();
+
+  const char* mac_address = wiFiManager.GetMacAddress();
+  mqttManager.SetupTopics(mac_address);
 
   lockController.Init();
 }
