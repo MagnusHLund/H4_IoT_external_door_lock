@@ -76,7 +76,7 @@ class MqttManager {
     }
 
   public:
-    void PublishMessage(const char* message, const char* topic = nullptr, bool retain = false) {
+    void PublishMessage(const char* message, const char* topic = nullptr, bool retain = true) {
       if(topic == nullptr) {
         topic = state_topic;
       }

@@ -11,6 +11,8 @@ class Pairing {
   public:
     void Init() {
       button.Init();
+
+      PairToHomeAssistant();
     }
 
   public:
@@ -24,11 +26,11 @@ class Pairing {
 
   public:
     void PairToHomeAssistant() {
-      char* mac_address = wiFiManager.GetMacAddress();
+      char* mac_address = wiFiManager.GetMacAddress(true);
       char* message = formatDiscoveryMessageJson(mac_address);
 
       char* discovery_topic = strdup(mqttManager.GetDiscoveryTopic()); 
-      mqttManager.PublishMessage(message, discovery_topic, true);
+      mqttManager.PublishMessage(message, discovery_topic);
 
       Serial.println("Sent discovery message");
     }
@@ -48,6 +50,12 @@ class Pairing {
       doc["payload_unlock"] = "UNLOCK";
       doc["state_locked"]   = "LOCKED";
       doc["state_unlocked"] = "UNLOCKED";
+
+      JsonObject device = doc.createNestedObject("device");
+      device["identifiers"] = mac_address;
+      device["manufacturer"] = "Arduino";
+      device["model"] = "Uno R4 WiFi";
+
 
       static char buffer[256];
       serializeJson(doc, buffer);

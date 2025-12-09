@@ -23,7 +23,7 @@ void setup() {
   wiFiManager.Connect();
   mqttManager.Connect();
 
-  const char* mac_address = wiFiManager.GetMacAddress();
+  const char* mac_address = wiFiManager.GetMacAddress(true);
   mqttManager.SetupTopics(mac_address);
 
   lockController.Init();
