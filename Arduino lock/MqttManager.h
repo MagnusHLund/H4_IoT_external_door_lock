@@ -76,13 +76,13 @@ class MqttManager {
     }
 
   public:
-    void PublishMessage(const char* message, const char* topic = nullptr) {
+    void PublishMessage(const char* message, const char* topic = nullptr, bool retain = false) {
       if(topic == nullptr) {
         topic = state_topic;
       }
 
       Serial.println(message);
-      client.publish(topic, message);
+      client.publish(topic, message, retain);
     }
   
   public:

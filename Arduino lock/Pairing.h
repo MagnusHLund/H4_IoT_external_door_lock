@@ -28,7 +28,9 @@ class Pairing {
       char* message = formatDiscoveryMessageJson(mac_address);
 
       char* discovery_topic = strdup(mqttManager.GetDiscoveryTopic()); 
-      mqttManager.PublishMessage(message, discovery_topic);
+      mqttManager.PublishMessage(message, discovery_topic, true);
+
+      Serial.println("Sent discovery message");
     }
 
   private:
