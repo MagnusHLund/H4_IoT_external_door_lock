@@ -2,14 +2,14 @@
 #include "LockCommand.h"
 #include <ArduinoJson.h>
 
-class LockManager {
-  static LockManager* instance;
+class LockController {
+  static LockController* instance;
 
   Motor motor;
   MqttManager& mqttManager;
 
   public:
-    LockManager(Motor motor, MqttManager& mqttManager)
+    LockController(Motor motor, MqttManager& mqttManager)
       : motor(motor), mqttManager(mqttManager) {
         instance = this;
       }
@@ -88,4 +88,4 @@ class LockManager {
 };
 
 // To prevent error when compiling
-LockManager* LockManager::instance = nullptr;
+LockController* LockController::instance = nullptr;

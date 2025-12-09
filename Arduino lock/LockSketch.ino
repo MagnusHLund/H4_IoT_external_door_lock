@@ -1,14 +1,14 @@
 #include "Config.h"
 #include "WiFiManager.h"
 #include "MqttManager.h"
-#include "LockManager.h"
+#include "LockController.h"
 
 WiFiManager wiFiManager(WIFI_SSID, WIFI_PASSWORD, WIFI_STATIC_IP, WIFI_GATEWAY, WIFI_SUBNET_MASK, WIFI_DNS_SERVER);
 MqttManager mqttManager(MQTT_HOSTNAME, MQTT_PORT, MQTT_USERNAME, MQTT_PASSWORD);
 
 Motor motor(MOTOR_PIN);
 
-LockManager lockManager(motor, mqttManager);
+LockController lockController(motor, mqttManager);
 
 unsigned long lastCheck = 0;
 
@@ -18,7 +18,7 @@ void setup() {
   wiFiManager.Connect();
   mqttManager.Connect();
 
-  lockManager.Init();
+  lockController.Init();
 }
 
 void loop() {
