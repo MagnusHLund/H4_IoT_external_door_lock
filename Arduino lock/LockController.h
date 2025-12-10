@@ -1,5 +1,4 @@
 #include "Motor.h"
-#include "LockCommand.h"
 
 class LockController {
   static LockController* instance;
@@ -32,7 +31,7 @@ class LockController {
       char cmdBuffer[32];
       memcpy(cmdBuffer, payload, length);
       cmdBuffer[length] = '\0';
-    
+
       if (strcmp(cmdBuffer, "LOCK") == 0) {
         LockDoor();
       } else if (strcmp(cmdBuffer, "UNLOCK") == 0) {
@@ -44,28 +43,14 @@ class LockController {
     void LockDoor() {
       motor.TurnDegrees(90);
 
-      char* message = CreateStateUpdateJson("Locked");
-      mqttManager.PublishMessage(message);
+      mqttManager.PublishMessage("LOCKED");
     }
 
   private:
     void UnlockDoor() {
       motor.TurnDegrees(0);
 
-      char* message = CreateStateUpdateJson("Unlocked");
-      mqttManager.PublishMessage(message);
-    }
-
-  private:
-    char* CreateStateUpdateJson(char* state) {
-      StaticJsonDocument<100> doc;
-
-      doc["state"] = state;
-
-      static char buffer[256];
-      serializeJson(doc, buffer);
-
-      return buffer;
+      mqttManager.PublishMessage("UNLOCKED");
     }
 };
 

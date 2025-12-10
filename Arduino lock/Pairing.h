@@ -1,3 +1,5 @@
+#include <ArduinoJson.h>
+
 class Pairing {
   WiFiManager& wiFiManager;
   MqttManager& mqttManager;
