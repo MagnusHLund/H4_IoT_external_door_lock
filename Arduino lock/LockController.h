@@ -29,15 +29,14 @@ class LockController {
 
   private:
     void UpdateLockState(char* topic, byte* payload, unsigned int length) {
-      LockCommand cmd;
-      if (DeserializeJsonPayload(payload, length, cmd)) {
-        if (strcmp(cmd.command, "lock") == 0) {
-          LockDoor();
-        } 
-        else if (strcmp(cmd.command, "unlock") == 0) 
-        {
-          UnlockDoor();
-        }
+      char cmdBuffer[32];
+      memcpy(cmdBuffer, payload, length);
+      cmdBuffer[length] = '\0';
+    
+      if (strcmp(cmdBuffer, "LOCK") == 0) {
+        LockDoor();
+      } else if (strcmp(cmdBuffer, "UNLOCK") == 0) {
+        UnlockDoor();
       }
     }
 
@@ -56,22 +55,6 @@ class LockController {
       char* message = CreateStateUpdateJson("Unlocked");
       mqttManager.PublishMessage(message);
     }
-
-  private:
-    bool DeserializeJsonPayload(byte* payload, unsigned int length, LockCommand& outCmd) {
-      StaticJsonDocument<256> doc;
-
-      DeserializationError error = deserializeJson(doc, payload, length);
-      if (error) {
-        Serial.print("JSON deserialization failed: ");
-        Serial.println(error.c_str());
-        return false;
-      }
-
-      outCmd = LockCommand::fromJson(doc);
-      return true;
-    }
-
 
   private:
     char* CreateStateUpdateJson(char* state) {
