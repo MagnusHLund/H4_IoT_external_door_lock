@@ -1,5 +1,3 @@
-#include <EEPROM.h>
-
 struct Config {
   char wifi_ssid[32];
   char wifi_password[64];
