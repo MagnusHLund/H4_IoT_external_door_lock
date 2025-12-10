@@ -20,10 +20,6 @@ void setup() {
   config.mqtt_port = MQTT_PORT;
   strcpy(config.mqtt_username, MQTT_USERNAME);
   strcpy(config.mqtt_password, MQTT_PASSWORD);
-
-  strcpy(config.ca_certificate, CA_CERTIFICATE);
-  strcpy(config.client_certificate, CLIENT_CERTIFICATE);
-  strcpy(config.client_key, PRIVATE_KEY);
     
   config.motor_pin = MOTOR_PIN;
   config.pair_button_pin = PAIR_BUTTON_PIN;

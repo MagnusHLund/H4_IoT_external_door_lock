@@ -44,14 +44,16 @@ class LockController {
     void LockDoor() {
       motor.TurnDegrees(90);
 
-      mqttManager.PublishMessage("LOCKED");
+      const char* message = CreateStateUpdateJson("LOCKED");
+      mqttManager.PublishMessage(message);
     }
 
   private:
     void UnlockDoor() {
       motor.TurnDegrees(0);
 
-      mqttManager.PublishMessage("UNLOCKED");
+      const char* message = CreateStateUpdateJson("UNLOCKED");
+      mqttManager.PublishMessage(message);
     }
 
   private:

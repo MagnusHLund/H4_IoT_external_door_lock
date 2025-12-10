@@ -6,7 +6,7 @@ class MqttManager {
   char command_topic[64]; // State change from Home Assistant
   char discovery_topic[64]; // Used for Home Assistant discovery
 
-  WiFiSSLClient wifiClient;
+  WiFiClient wifiClient;
   PubSubClient client;
 
   const char* server_hostname;
@@ -14,16 +14,12 @@ class MqttManager {
   const char* mqtt_username;
   const char* mqtt_password;
 
-  const char* ca_cert;
-
   public:
-    MqttManager(const char* server_hostname, int server_port, const char* mqtt_username, const char* mqtt_password, const char* ca_cert)
-      : client(wifiClient), server_hostname(server_hostname), server_port(server_port), mqtt_username(mqtt_username), mqtt_password(mqtt_password), ca_cert(ca_cert) {}
+    MqttManager(const char* server_hostname, int server_port, const char* mqtt_username, const char* mqtt_password)
+      : client(wifiClient), server_hostname(server_hostname), server_port(server_port), mqtt_username(mqtt_username), mqtt_password(mqtt_password) {}
 
   public:
     void Connect() {
-      wifiClient.setCACert(ca_cert);
-
       client.setBufferSize(512);
       client.setServer(server_hostname, server_port);
     }
