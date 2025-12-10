@@ -14,6 +14,8 @@ struct Config {
   char mqtt_password[64];
 
   char ca_certificate[2048];
+  char client_certificate[2048];
+  char client_key[2048];
 
   int motor_pin;
   int pair_button_pin;
