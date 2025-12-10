@@ -38,7 +38,8 @@ void setup() {
     config.mqtt_hostname,
     config.mqtt_port,
     config.mqtt_username,
-    config.mqtt_password
+    config.mqtt_password,
+    config.ca_certificate
   );
 
   pairButton = new Button(config.pair_button_pin);

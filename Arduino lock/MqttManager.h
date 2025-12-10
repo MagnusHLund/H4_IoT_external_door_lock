@@ -14,12 +14,16 @@ class MqttManager {
   const char* mqtt_username;
   const char* mqtt_password;
 
+  const char* ca_cert;
+
   public:
-    MqttManager(const char* server_hostname, int server_port, const char* mqtt_username, const char* mqtt_password)
-      : client(wifiClient), server_hostname(server_hostname), server_port(server_port), mqtt_username(mqtt_username), mqtt_password(mqtt_password) {}
+    MqttManager(const char* server_hostname, int server_port, const char* mqtt_username, const char* mqtt_password, const char* ca_cert)
+      : client(wifiClient), server_hostname(server_hostname), server_port(server_port), mqtt_username(mqtt_username), mqtt_password(mqtt_password), ca_cert(ca_cert) {}
 
   public:
     void Connect() {
+      wifiClient.setCACert(ca_cert);
+
       client.setBufferSize(512);
       client.setServer(server_hostname, server_port);
     }
