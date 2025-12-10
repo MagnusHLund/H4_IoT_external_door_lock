@@ -8,8 +8,8 @@
 
 static PubSubClient client;
 
-MqttClient::MqttClient(IPAddress& serverIp, uint16_t port, WiFiClient& networkClient)
-    : _serverIp(serverIp), _port(port),_networkClient(networkClient), _state(0)
+MqttClient::MqttClient(const IPAddress& serverIp, uint16_t port, WiFiClient& networkClient)
+    : _serverIp(serverIp), _port(port), _networkClient(networkClient), _state(0)
 {
     client.setClient(_networkClient);
     client.setServer(_serverIp, _port);
