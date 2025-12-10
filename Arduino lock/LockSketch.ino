@@ -1,5 +1,6 @@
 #include "Config.h"
 #include "Button.h"
+#include <ArduinoJson.h>
 #include "WiFiManager.h"
 #include "MqttManager.h"
 #include "LockController.h"

@@ -6,7 +6,7 @@ class MqttManager {
   char command_topic[64]; // State change from Home Assistant
   char discovery_topic[64]; // Used for Home Assistant discovery
 
-  WiFiClient wifiClient;
+  WiFiSSLClient wifiClient;
   PubSubClient client;
 
   const char* server_hostname;
@@ -76,13 +76,7 @@ class MqttManager {
         topic = state_topic;
       }
 
-      Serial.println(topic);
-      Serial.println(message);
       bool success = client.publish(topic, message, true);
-
-      if(!success) {
-        Serial.println(client.getWriteError());
-      }
     }
   
   public:

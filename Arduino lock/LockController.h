@@ -1,3 +1,4 @@
+#include "LockCommand.h"
 #include "Motor.h"
 
 class LockController {
@@ -28,14 +29,14 @@ class LockController {
 
   private:
     void UpdateLockState(char* topic, byte* payload, unsigned int length) {
-      char cmdBuffer[32];
-      memcpy(cmdBuffer, payload, length);
-      cmdBuffer[length] = '\0';
-
-      if (strcmp(cmdBuffer, "LOCK") == 0) {
-        LockDoor();
-      } else if (strcmp(cmdBuffer, "UNLOCK") == 0) {
-        UnlockDoor();
+      LockCommand cmd;
+      if (DeserializeJsonPayload(payload, length, cmd)) {
+        if (strcmp(cmd.command, "LOCK") == 0) {
+          LockDoor();
+        } 
+        else if (strcmp(cmd.command, "UNLOCK") == 0) {
+          UnlockDoor();
+        }
       }
     }
 
@@ -51,6 +52,33 @@ class LockController {
       motor.TurnDegrees(0);
 
       mqttManager.PublishMessage("UNLOCKED");
+    }
+
+  private:
+    bool DeserializeJsonPayload(byte* payload, unsigned int length, LockCommand& outCmd) {
+      StaticJsonDocument<256> doc;
+
+      DeserializationError error = deserializeJson(doc, payload, length);
+      if (error) {
+        Serial.print("JSON deserialization failed: ");
+        Serial.println(error.c_str());
+        return false;
+      }
+
+      outCmd = LockCommand::fromJson(doc);
+      return true;
+    }
+
+  private:
+    char* CreateStateUpdateJson(char* state) {
+      StaticJsonDocument<100> doc;
+
+      doc["state"] = state;
+
+      static char buffer[256];
+      serializeJson(doc, buffer);
+
+      return buffer;
     }
 };
 
