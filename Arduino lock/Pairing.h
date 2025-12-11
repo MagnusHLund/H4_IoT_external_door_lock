@@ -44,10 +44,10 @@ class Pairing {
       doc["unique_id"]      = mac_address; 
       doc["command_topic"]  = command_topic;
       doc["state_topic"]    = state_topic;
-      doc["payload_lock"]   = "{\"command\": \"LOCK\"}";
-      doc["payload_unlock"] = "{\"command\": \"UNLOCK\"}";
-      doc["state_locked"]   = "{\"state\": \"LOCKED\"}";
-      doc["state_unlocked"] = "{\"state\": \"UNLOCKED\"}";
+      doc["payload_unlock"] = "UNLOCK";
+      doc["payload_lock"]   = "LOCK";
+      doc["state_unlocked"] = "UNLOCKED";
+      doc["state_locked"]   = "LOCKED";
 
       JsonObject device = doc.createNestedObject("device");
       device["identifiers"] = mac_address;

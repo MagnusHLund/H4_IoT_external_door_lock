@@ -29,32 +29,32 @@ class LockController {
 
   private:
     void UpdateLockState(char* topic, byte* payload, unsigned int length) {
-      LockCommand cmd; 
-      
-      if (DeserializeJsonPayload(payload, length, cmd)) {
-        if (strcmp(cmd.command, "LOCK") == 0) { 
-          LockDoor(); 
-        } else if (strcmp(cmd.command, "UNLOCK") == 0) 
-        { 
-          UnlockDoor(); 
-        } 
+      char message[64];
+
+      memcpy(message, payload, length);
+      message[length] = '\0'; // terminate string
+
+      if (strcmp(message, "LOCK") == 0) {
+        LockDoor();
+      } else if (strcmp(message, "UNLOCK") == 0) {
+        UnlockDoor();
+      } else {
+        Serial.println("Unknown command");
       }
     }
 
   private: 
     void LockDoor() {
-      motor.TurnDegrees(90);
+      motor.TurnDegrees(0);
 
-      char* message = CreateStateUpdateJson("LOCKED");
-      mqttManager.PublishMessage(message);
+      mqttManager.PublishMessage("LOCKED");
     }
 
   private:
     void UnlockDoor() {
-      motor.TurnDegrees(0);
+      motor.TurnDegrees(90);
 
-      char* message = CreateStateUpdateJson("UNLOCKED");
-      mqttManager.PublishMessage(message);
+      mqttManager.PublishMessage("UNLOCKED");
     }
 
   private:
