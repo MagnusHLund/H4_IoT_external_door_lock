@@ -1,5 +1,5 @@
-#include "LockCommand.h"
 #include "Motor.h"
+#include "LockCommand.h"
 
 class LockController {
   static LockController* instance;
@@ -29,14 +29,15 @@ class LockController {
 
   private:
     void UpdateLockState(char* topic, byte* payload, unsigned int length) {
-      LockCommand cmd;
+      LockCommand cmd; 
+      
       if (DeserializeJsonPayload(payload, length, cmd)) {
-        if (strcmp(cmd.command, "LOCK") == 0) {
-          LockDoor();
+        if (strcmp(cmd.command, "lock") == 0) { 
+          LockDoor(); 
+        } else if (strcmp(cmd.command, "unlock") == 0) 
+        { 
+          UnlockDoor(); 
         } 
-        else if (strcmp(cmd.command, "UNLOCK") == 0) {
-          UnlockDoor();
-        }
       }
     }
 
@@ -44,7 +45,7 @@ class LockController {
     void LockDoor() {
       motor.TurnDegrees(90);
 
-      const char* message = CreateStateUpdateJson("LOCKED");
+      char* message = CreateStateUpdateJson("LOCKED");
       mqttManager.PublishMessage(message);
     }
 
@@ -52,23 +53,8 @@ class LockController {
     void UnlockDoor() {
       motor.TurnDegrees(0);
 
-      const char* message = CreateStateUpdateJson("UNLOCKED");
+      char* message = CreateStateUpdateJson("UNLOCKED");
       mqttManager.PublishMessage(message);
-    }
-
-  private:
-    bool DeserializeJsonPayload(byte* payload, unsigned int length, LockCommand& outCmd) {
-      StaticJsonDocument<256> doc;
-
-      DeserializationError error = deserializeJson(doc, payload, length);
-      if (error) {
-        Serial.print("JSON deserialization failed: ");
-        Serial.println(error.c_str());
-        return false;
-      }
-
-      outCmd = LockCommand::fromJson(doc);
-      return true;
     }
 
   private:
@@ -81,6 +67,21 @@ class LockController {
       serializeJson(doc, buffer);
 
       return buffer;
+    }
+
+  private: 
+    bool DeserializeJsonPayload(byte* payload, unsigned int length, LockCommand& outCmd) { 
+      StaticJsonDocument<256> doc; 
+      DeserializationError error = deserializeJson(doc, payload, length); 
+      
+      if (error) { 
+        Serial.print("JSON deserialization failed: "); 
+        Serial.println(error.c_str()); 
+        return false; 
+      } 
+      
+      outCmd = LockCommand::fromJson(doc); 
+      return true; 
     }
 };
 

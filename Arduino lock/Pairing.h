@@ -1,5 +1,3 @@
-#include <ArduinoJson.h>
-
 class Pairing {
   WiFiManager& wiFiManager;
   MqttManager& mqttManager;
@@ -46,10 +44,10 @@ class Pairing {
       doc["unique_id"]      = mac_address; 
       doc["command_topic"]  = command_topic;
       doc["state_topic"]    = state_topic;
-      doc["payload_lock"]   = "{\"command\":\"LOCK\"}";
-      doc["payload_unlock"] = "{\"command\":\"UNLOCK\"}";
-      doc["state_locked"]   = "{\"state\":\"LOCKED\"}";
-      doc["state_unlocked"] = "{\"state\":\"UNLOCKED\"}";
+      doc["payload_lock"]   = "\"command\": \"LOCK\"";
+      doc["payload_unlock"] = "\"command\": \"UNLOCK\"";
+      doc["state_locked"]   = "\"state\": \"LOCKED\"";
+      doc["state_unlocked"] = "\"state\": \"UNLOCKED\"";
 
       JsonObject device = doc.createNestedObject("device");
       device["identifiers"] = mac_address;

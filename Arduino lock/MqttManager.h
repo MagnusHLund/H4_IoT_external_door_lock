@@ -22,6 +22,8 @@ class MqttManager {
     void Connect() {
       client.setBufferSize(512);
       client.setServer(server_hostname, server_port);
+
+      EnsureConnectivity();
     }
 
   public:
@@ -59,7 +61,7 @@ class MqttManager {
 
         if (client.connect(clientId.c_str(), mqtt_username, mqtt_password)) {
           Serial.println("connected");
-          client.subscribe(command_topic); 
+          client.subscribe(GetCommandTopic()); 
         } else {
           Serial.print("failed, rc=");
           Serial.print(client.state());

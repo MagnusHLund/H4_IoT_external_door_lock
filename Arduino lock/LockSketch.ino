@@ -1,4 +1,4 @@
-#include "ConfigManager.h"
+#include "Config.h"
 #include "Button.h"
 #include <ArduinoJson.h>
 #include "WiFiManager.h"
@@ -6,65 +6,38 @@
 #include "LockController.h"
 #include "Pairing.h"
 
-Config config;
+WiFiManager wiFiManager(WIFI_SSID, WIFI_PASSWORD, WIFI_STATIC_IP, WIFI_GATEWAY, WIFI_SUBNET_MASK, WIFI_DNS_SERVER);
+MqttManager mqttManager(MQTT_HOSTNAME, MQTT_PORT, MQTT_USERNAME, MQTT_PASSWORD);
 
-// Declare pointers instead of objects
-WiFiManager* wiFiManager;
-MqttManager* mqttManager;
-Button* pairButton;
-Pairing* pairing;
-Motor* motor;
-LockController* lockController;
+Button pairButton(PAIR_BUTTON_PIN);
+Pairing pairing(wiFiManager, mqttManager, pairButton);
+
+Motor motor(MOTOR_PIN);
+LockController lockController(motor, mqttManager);
 
 unsigned long lastCheck = 0;
 
 void setup() {
   Serial.begin(9600);
 
-  // Load data from EEPROM
-  ConfigManager::LoadConfig(config);
+  wiFiManager.Connect();
+  mqttManager.Connect();
 
-  // Instantiate classes with EEPROM values
-  wiFiManager = new WiFiManager(
-    config.wifi_ssid,
-    config.wifi_password,
-    config.wifi_static_ip,
-    config.wifi_gateway,
-    config.wifi_subnet_mask,
-    config.wifi_dns_server
-  );
+  const char* mac_address = wiFiManager.GetMacAddress(true);
+  mqttManager.SetupTopics(mac_address);
 
-  mqttManager = new MqttManager(
-    config.mqtt_hostname,
-    config.mqtt_port,
-    config.mqtt_username,
-    config.mqtt_password
-  );
-
-  pairButton = new Button(config.pair_button_pin);
-  pairing = new Pairing(*wiFiManager, *mqttManager, *pairButton);
-
-  motor = new Motor(config.motor_pin);
-  lockController = new LockController(*motor, *mqttManager);
-
-  // Run setup methods
-  wiFiManager->Connect();
-  mqttManager->Connect();
-
-  const char* mac_address = wiFiManager->GetMacAddress(true);
-  mqttManager->SetupTopics(mac_address);
-
-  lockController->Init();
-  pairing->Init();
+  lockController.Init();
+  pairing.Init();
 }
 
 void loop() {
-  mqttManager->EnsureConnectivity();
+  mqttManager.EnsureConnectivity();
 
+  // WiFi can be kept alive left often than MQTT
   if (millis() - lastCheck > 5000) {
-    wiFiManager->EnsureConnectivity();
+    wiFiManager.EnsureConnectivity();
     lastCheck = millis();
   }
 
-  pairing->HandlePairingButton();
+  pairing.HandlePairingButton();
 }
