@@ -32,9 +32,9 @@ class LockController {
       LockCommand cmd; 
       
       if (DeserializeJsonPayload(payload, length, cmd)) {
-        if (strcmp(cmd.command, "lock") == 0) { 
+        if (strcmp(cmd.command, "LOCK") == 0) { 
           LockDoor(); 
-        } else if (strcmp(cmd.command, "unlock") == 0) 
+        } else if (strcmp(cmd.command, "UNLOCK") == 0) 
         { 
           UnlockDoor(); 
         } 
