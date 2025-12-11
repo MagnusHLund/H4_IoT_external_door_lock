@@ -23,8 +23,8 @@ Fill in the following code:
 #define MQTT_PASSWORD ""
 
 // Motor
-#define MOTOR_PIN 2
+#define MOTOR_PIN 3
 
 // Button
-#define PAIR_BUTTON_PIN 3
+#define PAIR_BUTTON_PIN 2
 ```
