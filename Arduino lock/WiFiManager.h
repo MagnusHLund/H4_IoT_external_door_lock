@@ -54,13 +54,18 @@ class WiFiManager {
     }
 
   public:
-    char* GetMacAddress() {
+    char* GetMacAddress(bool remove_colons = false) {
       static char macStr[18];
       byte mac[6];
       WiFi.macAddress(mac);
     
-      snprintf(macStr, sizeof(macStr), "%02X:%02X:%02X:%02X:%02X:%02X",
-               mac[0], mac[1], mac[2], mac[3], mac[4], mac[5]);
+      if (remove_colons) {
+        snprintf(macStr, sizeof(macStr), "%02X%02X%02X%02X%02X%02X",
+                 mac[0], mac[1], mac[2], mac[3], mac[4], mac[5]);
+      } else {
+        snprintf(macStr, sizeof(macStr), "%02X:%02X:%02X:%02X:%02X:%02X",
+                 mac[0], mac[1], mac[2], mac[3], mac[4], mac[5]);
+      }
     
       return macStr; 
     }

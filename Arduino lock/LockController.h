@@ -1,5 +1,4 @@
 #include "Motor.h"
-#include "LockCommand.h"
 
 class LockController {
   static LockController* instance;
@@ -29,60 +28,32 @@ class LockController {
 
   private:
     void UpdateLockState(char* topic, byte* payload, unsigned int length) {
-      LockCommand cmd;
-      if (DeserializeJsonPayload(payload, length, cmd)) {
-        if (strcmp(cmd.command, "lock") == 0) {
-          LockDoor();
-        } 
-        else if (strcmp(cmd.command, "unlock") == 0) 
-        {
-          UnlockDoor();
-        }
+      char message[64];
+
+      memcpy(message, payload, length);
+      message[length] = '\0'; // terminate string
+
+      if (strcmp(message, "LOCK") == 0) {
+        LockDoor();
+      } else if (strcmp(message, "UNLOCK") == 0) {
+        UnlockDoor();
+      } else {
+        Serial.println("Unknown command");
       }
     }
 
   private: 
     void LockDoor() {
-      motor.TurnDegrees(90);
+      motor.TurnDegrees(0);
 
-      char* message = CreateStateUpdateJson("Locked");
-      mqttManager.PublishMessage(message);
+      mqttManager.PublishMessage("LOCKED");
     }
 
   private:
     void UnlockDoor() {
-      motor.TurnDegrees(0);
+      motor.TurnDegrees(90);
 
-      char* message = CreateStateUpdateJson("Unlocked");
-      mqttManager.PublishMessage(message);
-    }
-
-  private:
-    bool DeserializeJsonPayload(byte* payload, unsigned int length, LockCommand& outCmd) {
-      StaticJsonDocument<256> doc;
-
-      DeserializationError error = deserializeJson(doc, payload, length);
-      if (error) {
-        Serial.print("JSON deserialization failed: ");
-        Serial.println(error.c_str());
-        return false;
-      }
-
-      outCmd = LockCommand::fromJson(doc);
-      return true;
-    }
-
-
-  private:
-    char* CreateStateUpdateJson(char* state) {
-      StaticJsonDocument<100> doc;
-
-      doc["state"] = state;
-
-      static char buffer[256];
-      serializeJson(doc, buffer);
-
-      return buffer;
+      mqttManager.PublishMessage("UNLOCKED");
     }
 };
 

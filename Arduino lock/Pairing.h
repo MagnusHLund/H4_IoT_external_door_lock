@@ -2,22 +2,43 @@ class Pairing {
   WiFiManager& wiFiManager;
   MqttManager& mqttManager;
 
+  Button& button;
+  Light& light;
+
   public:
-    Pairing(WiFiManager& wiFiManager, MqttManager& mqttManager) 
-      : wiFiManager(wiFiManager), mqttManager(mqttManager) {}
+    Pairing(WiFiManager& wiFiManager, MqttManager& mqttManager, Button& button, Light& light) 
+      : wiFiManager(wiFiManager), mqttManager(mqttManager), button(button), light(light) {}
+
+  public:
+    void Init() {
+      button.Init();
+
+      PairToHomeAssistant();
+      light.Blink(125, 5);
+    }
+
+  public:
+    void HandlePairingButton() {
+      int fiveSeconds = 5000;
+
+      if (button.IsHeld(fiveSeconds)) {
+        PairToHomeAssistant();
+        
+      }
+    }
 
   public:
     void PairToHomeAssistant() {
-      char* mac_address = wiFiManager.GetMacAddress();
+      char* mac_address = wiFiManager.GetMacAddress(true);
       char* message = formatDiscoveryMessageJson(mac_address);
 
-      char* discovery_topic = strdup(mqttManager.GetDiscoveryTopic()); 
-      mqttManager.PublishMessage(message, discovery_topic);
+      mqttManager.PublishMessage(message, mqttManager.GetDiscoveryTopic());
+      Serial.println("Sent discovery message");
     }
 
   private:
     char* formatDiscoveryMessageJson(char* mac_address) {
-      StaticJsonDocument<300> doc;
+      StaticJsonDocument<512> doc;
 
       const char* command_topic = mqttManager.GetCommandTopic();
       const char* state_topic = mqttManager.GetStateTopic();
@@ -26,12 +47,17 @@ class Pairing {
       doc["unique_id"]      = mac_address; 
       doc["command_topic"]  = command_topic;
       doc["state_topic"]    = state_topic;
-      doc["payload_lock"]   = "LOCK";
       doc["payload_unlock"] = "UNLOCK";
-      doc["state_locked"]   = "LOCKED";
+      doc["payload_lock"]   = "LOCK";
       doc["state_unlocked"] = "UNLOCKED";
+      doc["state_locked"]   = "LOCKED";
 
-      static char buffer[256];
+      JsonObject device = doc.createNestedObject("device");
+      device["identifiers"] = mac_address;
+      device["manufacturer"] = "Arduino";
+      device["model"] = "Uno R4 WiFi";
+
+      static char buffer[512];
       serializeJson(doc, buffer);
 
       return buffer;
