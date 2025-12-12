@@ -4,6 +4,11 @@
 // ----------------- BUZZER -----------------
 #define BUZZER A0
 
+// ----------------- LED -----------------
+#define RED_PIN A1
+#define GREEN_PIN A2
+#define BLUE_PIN A3
+
 // ----------------- KEYPAD -----------------
 const int ROW_NUM = 4;
 const int COLUMN_NUM = 3;
@@ -26,3 +31,32 @@ const String PASSWORD = "1234";
 
 // Static allowed card (you will replace later)
 byte ALLOWED_UID[4] = {0xDE, 0xAD, 0xBE, 0xEF};
+
+// ----------------- LED FUNCTIONS -----------------
+inline void setupLEDs() {
+  pinMode(RED_PIN, OUTPUT);
+  pinMode(GREEN_PIN, OUTPUT);
+  pinMode(BLUE_PIN, OUTPUT);
+  // Turn off all LEDs initially
+  digitalWrite(RED_PIN, LOW);
+  digitalWrite(GREEN_PIN, LOW);
+  digitalWrite(BLUE_PIN, LOW);
+}
+
+inline void showSuccess() {
+  // Turn off red, turn on green
+  digitalWrite(RED_PIN, LOW);
+  digitalWrite(GREEN_PIN, HIGH);
+  digitalWrite(BLUE_PIN, LOW);
+  delay(2000); // Show green for 2 seconds
+  digitalWrite(GREEN_PIN, LOW); // Turn off green
+}
+
+inline void showError() {
+  // Turn off green, turn on red
+  digitalWrite(GREEN_PIN, LOW);
+  digitalWrite(RED_PIN, HIGH);
+  digitalWrite(BLUE_PIN, LOW);
+  delay(2000); // Show red for 2 seconds
+  digitalWrite(RED_PIN, LOW); // Turn off red
+}

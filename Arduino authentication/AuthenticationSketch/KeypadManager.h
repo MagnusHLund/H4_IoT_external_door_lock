@@ -25,9 +25,11 @@ public:
       if (inputPassword == PASSWORD) {
         Serial.println("Keypad: Correct");
         beepSuccess();
+        showSuccess();
       } else {
         Serial.println("Keypad: Incorrect");
         beepFail();
+        showError();
       }
       inputPassword = "";
     }

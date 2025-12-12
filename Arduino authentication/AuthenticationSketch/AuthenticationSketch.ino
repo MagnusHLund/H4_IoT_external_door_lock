@@ -9,6 +9,7 @@ RFIDManager rfidManager;
 void setup() {
   Serial.begin(115200);
   pinMode(BUZZER, OUTPUT);
+  setupLEDs();
 
   keypadManager.setup();
   rfidManager.setup();

@@ -34,9 +34,11 @@ public:
     if (compareUID(rfid.uid.uidByte, rfid.uid.size)) {
       Serial.println("RFID: Card Accepted");
       beepSuccess();
+      showSuccess();
     } else {
       Serial.println("RFID: Wrong Card");
       beepFail();
+      showError();
     }
 
     rfid.PICC_HaltA();
