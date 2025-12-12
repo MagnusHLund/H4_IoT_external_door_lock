@@ -9,6 +9,9 @@
 #define GREEN_PIN A2
 #define BLUE_PIN A3
 
+// ----------------- BUTTON -----------------
+#define BUTTON_PIN A4
+
 // ----------------- KEYPAD -----------------
 const int ROW_NUM = 4;
 const int COLUMN_NUM = 3;
