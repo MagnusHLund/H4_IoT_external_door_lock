@@ -1,5 +1,4 @@
 #include "Motor.h"
-#include "LockCommand.h"
 
 class LockController {
   static LockController* instance;
@@ -55,33 +54,6 @@ class LockController {
       motor.TurnDegrees(90);
 
       mqttManager.PublishMessage("UNLOCKED");
-    }
-
-  private:
-    char* CreateStateUpdateJson(char* state) {
-      StaticJsonDocument<100> doc;
-
-      doc["state"] = state;
-
-      static char buffer[256];
-      serializeJson(doc, buffer);
-
-      return buffer;
-    }
-
-  private: 
-    bool DeserializeJsonPayload(byte* payload, unsigned int length, LockCommand& outCmd) { 
-      StaticJsonDocument<256> doc; 
-      DeserializationError error = deserializeJson(doc, payload, length); 
-      
-      if (error) { 
-        Serial.print("JSON deserialization failed: "); 
-        Serial.println(error.c_str()); 
-        return false; 
-      } 
-      
-      outCmd = LockCommand::fromJson(doc); 
-      return true; 
     }
 };
 

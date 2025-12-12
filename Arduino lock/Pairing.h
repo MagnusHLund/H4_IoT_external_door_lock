@@ -3,16 +3,18 @@ class Pairing {
   MqttManager& mqttManager;
 
   Button& button;
+  Light& light;
 
   public:
-    Pairing(WiFiManager& wiFiManager, MqttManager& mqttManager, Button& button) 
-      : wiFiManager(wiFiManager), mqttManager(mqttManager), button(button) {}
+    Pairing(WiFiManager& wiFiManager, MqttManager& mqttManager, Button& button, Light& light) 
+      : wiFiManager(wiFiManager), mqttManager(mqttManager), button(button), light(light) {}
 
   public:
     void Init() {
       button.Init();
 
       PairToHomeAssistant();
+      light.Blink(125, 5);
     }
 
   public:
@@ -21,6 +23,7 @@ class Pairing {
 
       if (button.IsHeld(fiveSeconds)) {
         PairToHomeAssistant();
+        
       }
     }
 
