@@ -1,6 +1,20 @@
 #pragma once
 #include <Arduino.h>
 
+// ----------------- WIFI -----------------
+#define WIFI_SSID "your_wifi_ssid"
+#define WIFI_PASSWORD "your_wifi_password"
+#define WIFI_STATIC_IP "192.168.1.100"
+#define WIFI_SUBNET_MASK "255.255.255.0"
+#define WIFI_GATEWAY "192.168.1.1"
+#define WIFI_DNS_SERVER "8.8.8.8"
+
+// ----------------- MQTT -----------------
+#define MQTT_HOSTNAME "192.168.1.200"
+#define MQTT_PORT 1883
+#define MQTT_USERNAME "your_mqtt_username"
+#define MQTT_PASSWORD "your_mqtt_password"
+
 // ----------------- BUZZER -----------------
 #define BUZZER A0
 

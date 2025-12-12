@@ -1,0 +1,22 @@
+{
+    "folders": [
+        {
+            "path": "./Arduino authentication/AuthenticationSketch"
+        },
+        {
+            "path": "./Arduino Lock"
+        }
+    ],
+    "settings": {
+        "arduino.path": "C:\\Program Files (x86)\\Arduino",
+        "arduino.defaultBaudRate": 115200,
+        "arduino.enableUSBDetection": true,
+        "arduino.logLevel": "info",
+        "arduino.skipHeaderCheck": false,
+        "arduino.additionalUrls": [],
+        "arduino.boardManager.additionalUrls": [],
+        "arduino.autoUpdateSketches": true,
+        "arduino.verifyOnUpload": true,
+        "arduino.useArduinoCli": false
+    }
+}

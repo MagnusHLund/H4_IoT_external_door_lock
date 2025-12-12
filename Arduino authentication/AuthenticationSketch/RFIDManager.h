@@ -4,13 +4,21 @@
 #include "Config.h"
 #include "Buzzer.h"
 
+// Forward declaration
+class AuthenticationManager;
+
 class RFIDManager {
 public:
   MFRC522 rfid = MFRC522(SS_PIN, RST_PIN);
+  AuthenticationManager* authManager = nullptr;
 
   void setup() {
     SPI.begin();
     rfid.PCD_Init();
+  }
+
+  void setAuthenticationManager(AuthenticationManager* auth) {
+    authManager = auth;
   }
 
   bool compareUID(byte *uid, byte size) {
@@ -35,10 +43,12 @@ public:
       Serial.println("RFID: Card Accepted");
       beepSuccess();
       showSuccess();
+      if (authManager) authManager->PublishAuthenticationResult(true);
     } else {
       Serial.println("RFID: Wrong Card");
       beepFail();
       showError();
+      if (authManager) authManager->PublishAuthenticationResult(false);
     }
 
     rfid.PICC_HaltA();
