@@ -4,6 +4,7 @@
 #include "Include/WiFiManager.h"
 #include "Include/MqttManager.h"
 #include "AuthenticationManager.h"
+#include "Pairing.h"
 #include "KeypadManager.h"
 #include "RFIDManager.h"
 #include "ButtonManager.h"
@@ -12,6 +13,7 @@ WiFiManager wiFiManager(WIFI_SSID, WIFI_PASSWORD, WIFI_STATIC_IP, WIFI_GATEWAY, 
 MqttManager mqttManager(MQTT_HOSTNAME, MQTT_PORT, MQTT_USERNAME, MQTT_PASSWORD);
 
 AuthenticationManager authenticationManager(mqttManager);
+Pairing pairing(wiFiManager, mqttManager);
 
 KeypadManager keypadManager;
 RFIDManager rfidManager;
@@ -37,6 +39,12 @@ void setup() {
   // Link authentication manager to keypad and rfid managers
   keypadManager.setAuthenticationManager(&authenticationManager);
   rfidManager.setAuthenticationManager(&authenticationManager);
+  
+  // Link pairing manager to button manager
+  buttonManager.setPairingManager(&pairing);
+  
+  // Initialize pairing (sends initial discovery message)
+  pairing.Init();
 }
 
 void loop() {
