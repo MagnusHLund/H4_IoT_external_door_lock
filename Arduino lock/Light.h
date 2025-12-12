@@ -3,16 +3,20 @@ class Light {
 
   public:
     Light(int light_pin) : light_pin(light_pin) {
-      pinMode(light_pin, OUTPUT);
     } 
 
   public:
-    TurnOn() {
+    void Init() {
+      pinMode(light_pin, OUTPUT);
+    }
+
+  public:
+    void TurnOn() {
       digitalWrite(light_pin, HIGH);
     }
 
   public:
-    TurnOff() {
+    void TurnOff() {
       digitalWrite(light_pin, LOW);
     }
 

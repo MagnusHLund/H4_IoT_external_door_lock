@@ -12,9 +12,9 @@ class Pairing {
   public:
     void Init() {
       button.Init();
+      light.Init();
 
       PairToHomeAssistant();
-      light.Blink(125, 5);
     }
 
   public:
@@ -23,7 +23,7 @@ class Pairing {
 
       if (button.IsHeld(fiveSeconds)) {
         PairToHomeAssistant();
-        
+        light.Blink(125, 5);
       }
     }
 

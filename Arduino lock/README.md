@@ -27,4 +27,7 @@ Fill in the following code:
 
 // Button
 #define PAIR_BUTTON_PIN 2
+
+// Light
+#define LIGHT_PIN 11
 ```

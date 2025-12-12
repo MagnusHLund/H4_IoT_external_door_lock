@@ -10,8 +10,9 @@
 WiFiManager wiFiManager(WIFI_SSID, WIFI_PASSWORD, WIFI_STATIC_IP, WIFI_GATEWAY, WIFI_SUBNET_MASK, WIFI_DNS_SERVER);
 MqttManager mqttManager(MQTT_HOSTNAME, MQTT_PORT, MQTT_USERNAME, MQTT_PASSWORD);
 
+Light light(LIGHT_PIN);
 Button pairButton(PAIR_BUTTON_PIN);
-Pairing pairing(wiFiManager, mqttManager, pairButton);
+Pairing pairing(wiFiManager, mqttManager, pairButton, light);
 
 Motor motor(MOTOR_PIN);
 LockController lockController(motor, mqttManager);
