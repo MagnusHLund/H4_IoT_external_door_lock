@@ -1,5 +1,4 @@
 #pragma once
-#include "Include/MqttManager.h"
 #include <ArduinoJson.h>
 
 class AuthenticationManager {
