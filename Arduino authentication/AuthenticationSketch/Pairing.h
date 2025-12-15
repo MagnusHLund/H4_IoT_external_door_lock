@@ -1,5 +1,4 @@
 #pragma once
-#include "Include/WiFiManager.h"
 #include "Include/MqttManager.h"
 #include <ArduinoJson.h>
 
@@ -25,7 +24,7 @@ class Pairing {
 
   public:
     void PairToHomeAssistant() {
-      char* mac_address = wiFiManager.GetMacAddress();
+      char* mac_address = wiFiManager.GetMacAddress(true);
       char* message = formatDiscoveryMessageJson(mac_address);
 
       mqttManager.PublishMessage(message, mqttManager.GetDiscoveryTopic());
