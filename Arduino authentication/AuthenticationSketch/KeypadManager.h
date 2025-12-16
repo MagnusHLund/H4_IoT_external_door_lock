@@ -7,10 +7,15 @@
 class AuthenticationManager;
 
 class KeypadManager {
-public:
+
+  
+  public:
+  MqttManager& mqttManager;
   DIYables_Keypad keypad = DIYables_Keypad(makeKeymap(KEYS), PIN_ROWS, PIN_COLS, ROW_NUM, COLUMN_NUM);
   String inputPassword = "";
   AuthenticationManager* authManager = nullptr;
+
+  KeypadManager(MqttManager& mqttManager) : mqttManager(mqttManager) {}
 
   void setup() {
     inputPassword.reserve(32);
@@ -34,12 +39,14 @@ public:
         Serial.println("Keypad: Correct");
         beepSuccess();
         showSuccess();
-        if (authManager) authManager->PublishAuthenticationResult(true, false, true);
+        if (authManager) {
+          mqttManager.PublishMessage("Authenticated", mqttManager.GetKeypadStateTopic());
+        }
       } else {
         Serial.println("Keypad: Incorrect");
         beepFail();
         showError();
-        if (authManager) authManager->PublishAuthenticationResult(false, false, true);
+        if (authManager) authManager->PublishAuthenticationResult(false, false, true); // do not need
       }
       inputPassword = "";
     }

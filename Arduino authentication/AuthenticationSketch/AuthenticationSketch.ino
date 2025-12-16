@@ -1,8 +1,8 @@
 #include <Arduino.h>
 #include "Config.h"
 #include <ArduinoJson.h>
-#include "Include/WiFiManager.h"
-#include "Include/MqttManager.h"
+#include "WiFiManager.h"
+#include "MqttManager.h"
 #include "AuthenticationManager.h"
 #include "Pairing.h"
 #include "KeypadManager.h"
@@ -15,8 +15,8 @@ MqttManager mqttManager(MQTT_HOSTNAME, MQTT_PORT, MQTT_USERNAME, MQTT_PASSWORD);
 AuthenticationManager authenticationManager(mqttManager);
 Pairing pairing(wiFiManager, mqttManager);
 
-KeypadManager keypadManager;
-RFIDManager rfidManager;
+KeypadManager keypadManager(mqttManager);
+RFIDManager rfidManager(mqttManager);
 ButtonManager buttonManager;
 
 unsigned long lastCheck = 0;

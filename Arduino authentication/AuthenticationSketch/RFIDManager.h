@@ -9,8 +9,11 @@ class AuthenticationManager;
 
 class RFIDManager {
 public:
+  MqttManager& mqttManager;
   MFRC522 rfid = MFRC522(SS_PIN, RST_PIN);
   AuthenticationManager* authManager = nullptr;
+
+  RFIDManager(MqttManager& mqttManager) : mqttManager(mqttManager) {}
 
   void setup() {
     SPI.begin();
@@ -43,12 +46,14 @@ public:
       Serial.println("RFID: Card Accepted");
       beepSuccess();
       showSuccess();
-      if (authManager) authManager->PublishAuthenticationResult(true, true, false);
+      if (authManager) {
+        mqttManager.PublishMessage("Authenticated", mqttManager.GetRfidStateTopic());
+      } 
     } else {
       Serial.println("RFID: Wrong Card");
       beepFail();
       showError();
-      if (authManager) authManager->PublishAuthenticationResult(false, true, false);
+      if (authManager) authManager->PublishAuthenticationResult(false, true, false); // Do not need
     }
 
     rfid.PICC_HaltA();

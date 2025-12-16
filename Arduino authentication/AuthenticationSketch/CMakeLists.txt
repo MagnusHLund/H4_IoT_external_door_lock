@@ -22,8 +22,8 @@ set(ARDUINO_HARDWARE_LIBRARIES_DIR "${ARDUINO_HARDWARE_ROOT}/libraries")
 set(SRC
         AuthenticationSketch.ino
         WiFiManager.cpp
-        Include/WiFiManager.h
-        Include/MqttClient.h
+        WiFiManager.h
+        MqttClient.h
         MqttClient.cpp
 )
 
