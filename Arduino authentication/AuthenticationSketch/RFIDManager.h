@@ -43,12 +43,12 @@ public:
       Serial.println("RFID: Card Accepted");
       beepSuccess();
       showSuccess();
-      if (authManager) authManager->PublishAuthenticationResult(true);
+      if (authManager) authManager->PublishAuthenticationResult(true, true, false);
     } else {
       Serial.println("RFID: Wrong Card");
       beepFail();
       showError();
-      if (authManager) authManager->PublishAuthenticationResult(false);
+      if (authManager) authManager->PublishAuthenticationResult(false, true, false);
     }
 
     rfid.PICC_HaltA();

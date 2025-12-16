@@ -34,12 +34,12 @@ public:
         Serial.println("Keypad: Correct");
         beepSuccess();
         showSuccess();
-        if (authManager) authManager->PublishAuthenticationResult(true);
+        if (authManager) authManager->PublishAuthenticationResult(true, false, true);
       } else {
         Serial.println("Keypad: Incorrect");
         beepFail();
         showError();
-        if (authManager) authManager->PublishAuthenticationResult(false);
+        if (authManager) authManager->PublishAuthenticationResult(false, false, true);
       }
       inputPassword = "";
     }

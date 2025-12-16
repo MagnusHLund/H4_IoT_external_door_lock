@@ -41,10 +41,10 @@ class Pairing {
       doc["unique_id"]      = mac_address; 
       doc["command_topic"]  = command_topic;
       doc["state_topic"]    = state_topic;
-      doc["payload_unlock"] = "UNLOCK";
-      doc["payload_lock"]   = "LOCK";
-      doc["state_unlocked"] = "UNLOCKED";
-      doc["state_locked"]   = "LOCKED";
+      doc["state_rfid_unauthenticated"] = "UNAUTHENTICATED";
+      doc["state_keypad_unauthenticated"]   = "UNAUTHENTICATED";
+      doc["state_rfid_authenticated"]     = "AUTHENTICATED";
+      doc["state_keypad_authenticated"]   = "AUTHENTICATED";
 
       JsonObject device = doc.createNestedObject("device");
       device["identifiers"] = mac_address;
