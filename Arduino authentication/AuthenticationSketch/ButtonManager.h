@@ -11,6 +11,7 @@ private:
   unsigned long lastDebounceTime = 0;
   unsigned long buttonPressStartTime = 0;
   bool buttonHoldHandled = false;
+  bool fiveSecondReached = false;
   const unsigned long debounceDelay = 50;
   const unsigned long holdTime = 5000; // 5 seconds for pairing
   
@@ -35,28 +36,48 @@ public:
       if (buttonState == LOW) {
         buttonPressStartTime = millis();
         buttonHoldHandled = false;
+        fiveSecondReached = false;
       }
     }
     
     if ((millis() - lastDebounceTime) > debounceDelay) {
       if (buttonState == LOW) {
-        // Button is pressed, turn on blue LED
-        digitalWrite(RED_PIN, LOW);
-        digitalWrite(GREEN_PIN, LOW);
-        digitalWrite(BLUE_PIN, HIGH);
+        unsigned long holdDuration = millis() - buttonPressStartTime;
         
-        // Check for 5-second hold for pairing
-        if (!buttonHoldHandled && (millis() - buttonPressStartTime) >= holdTime) {
-          if (pairingManager) {
-            Serial.println("Button held for 5 seconds - triggering pairing");
-            pairingManager->PairToHomeAssistant();
-            buttonHoldHandled = true; // Prevent multiple triggers
+        // Check if 5 seconds have been reached
+        if (!fiveSecondReached && holdDuration >= holdTime) {
+          Serial.println("Button held for 5 seconds - LED will turn GREEN, you can release now!");
+          fiveSecondReached = true;
+        }
+        
+        // Handle LED color change after 5 seconds
+        if (fiveSecondReached) {
+          // Change to GREEN LED after 5 seconds (instead of blinking)
+          digitalWrite(RED_PIN, LOW);
+          digitalWrite(GREEN_PIN, HIGH); // Green indicates ready to release
+          digitalWrite(BLUE_PIN, LOW);
+          
+          // Trigger pairing only once after 5 seconds
+          if (!buttonHoldHandled) {
+            if (pairingManager) {
+              Serial.println("LED turned GREEN - Triggering pairing - button can be released");
+              pairingManager->PairToHomeAssistant();
+              buttonHoldHandled = true; // Prevent multiple triggers
+            }
           }
+        } else {
+          // Normal blue LED on while pressing (before 5 seconds)
+          digitalWrite(RED_PIN, LOW);
+          digitalWrite(GREEN_PIN, LOW);
+          digitalWrite(BLUE_PIN, HIGH);
         }
       } else {
-        // Button is released, turn off blue LED
+        // Button is released, turn off all LEDs and reset states
+        digitalWrite(RED_PIN, LOW);
+        digitalWrite(GREEN_PIN, LOW);
         digitalWrite(BLUE_PIN, LOW);
-        buttonHoldHandled = false; // Reset for next press
+        buttonHoldHandled = false;
+        fiveSecondReached = false;
       }
     }
     

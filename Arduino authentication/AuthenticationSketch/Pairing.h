@@ -24,27 +24,27 @@ class Pairing {
   public:
     void PairToHomeAssistant() {
       char* mac_address = wiFiManager.GetMacAddress(true);
-      char* message = formatDiscoveryMessageJson(mac_address);
 
-      mqttManager.PublishMessage(message, mqttManager.GetDiscoveryTopic());
+      char* message = formatDiscoveryMessageJson(mac_address,  "rfid", "{{ value_json.rfid_authenticated }}", mqttManager.GetRfidStateTopic());
+      mqttManager.PublishMessage(message, mqttManager.GetRfidDiscoveryTopic());
+
+      message = formatDiscoveryMessageJson(mac_address, "keypad", "{{ value_json.keypad_authenticated }}", mqttManager.GetKeypadStateTopic());
+      mqttManager.PublishMessage(message, mqttManager.GetKeypadDiscoveryTopic());
+
       Serial.println("Sent discovery message");
     }
 
   private:
-    char* formatDiscoveryMessageJson(char* mac_address) {
+    char* formatDiscoveryMessageJson(char* mac_address, const char* name, const char* templateStr, const char* state_topic) {
       StaticJsonDocument<512> doc;
 
-      const char* command_topic = mqttManager.GetCommandTopic();
-      const char* state_topic = mqttManager.GetStateTopic();
-
-      doc["name"]           = "Arduino Authentication";
-      doc["unique_id"]      = mac_address; 
-      doc["command_topic"]  = command_topic;
+      doc["name"]           = name;
+      doc["unique_id"]      = String(mac_address) + "_" + name; 
+      doc["object_id"]      = String(mac_address) + "_" + name; 
       doc["state_topic"]    = state_topic;
-      doc["payload_unlock"] = "UNLOCK";
-      doc["payload_lock"]   = "LOCK";
-      doc["state_unlocked"] = "UNLOCKED";
-      doc["state_locked"]   = "LOCKED";
+      doc["device_class"]   = "lock";
+      doc["payload_on"]     = "Authenticated";
+      doc["payload_off"]    = "Unauthenticated";
 
       JsonObject device = doc.createNestedObject("device");
       device["identifiers"] = mac_address;

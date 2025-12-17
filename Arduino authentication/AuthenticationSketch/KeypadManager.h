@@ -7,10 +7,19 @@
 class AuthenticationManager;
 
 class KeypadManager {
-public:
+private:
+  unsigned long unlockTime = 0;
+  bool isUnlocked = false;
+  const unsigned long lockDelay = 10000; // 10 seconds
+
+  
+  public:
+  MqttManager& mqttManager;
   DIYables_Keypad keypad = DIYables_Keypad(makeKeymap(KEYS), PIN_ROWS, PIN_COLS, ROW_NUM, COLUMN_NUM);
   String inputPassword = "";
   AuthenticationManager* authManager = nullptr;
+
+  KeypadManager(MqttManager& mqttManager) : mqttManager(mqttManager) {}
 
   void setup() {
     inputPassword.reserve(32);
@@ -21,6 +30,16 @@ public:
   }
 
   void update() {
+    // Check if door should auto-lock after 10 seconds (check this first, always)
+    if (isUnlocked && (millis() - unlockTime >= lockDelay)) {
+      Serial.println("Keypad: Auto-locking after 10 seconds");
+      isUnlocked = false;
+      showError(); // Show locked state
+      if (authManager) {
+        mqttManager.PublishMessage("Unauthenticated", mqttManager.GetKeypadStateTopic());
+      }
+    }
+    
     char key = keypad.getKey();
     if (!key) return;
 
@@ -34,12 +53,16 @@ public:
         Serial.println("Keypad: Correct");
         beepSuccess();
         showSuccess();
-        if (authManager) authManager->PublishAuthenticationResult(true);
+        isUnlocked = true;
+        unlockTime = millis();
+        if (authManager) {
+          mqttManager.PublishMessage("Authenticated", mqttManager.GetKeypadStateTopic());
+        }
       } else {
         Serial.println("Keypad: Incorrect");
         beepFail();
         showError();
-        if (authManager) authManager->PublishAuthenticationResult(false);
+        if (authManager) authManager->PublishAuthenticationResult(false, false, true); // do not need
       }
       inputPassword = "";
     }

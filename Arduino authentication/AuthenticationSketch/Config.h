@@ -2,18 +2,18 @@
 #include <Arduino.h>
 
 // ----------------- WIFI -----------------
-#define WIFI_SSID "your_wifi_ssid"
-#define WIFI_PASSWORD "your_wifi_password"
-#define WIFI_STATIC_IP "192.168.1.100"
-#define WIFI_SUBNET_MASK "255.255.255.0"
-#define WIFI_GATEWAY "192.168.1.1"
-#define WIFI_DNS_SERVER "8.8.8.8"
+#define WIFI_SSID "Lab-ZBC"
+#define WIFI_PASSWORD "Prestige#PuzzledCASH48!"
+#define WIFI_STATIC_IP "10.101.161.42"
+#define WIFI_SUBNET_MASK "255.255.0.0"
+#define WIFI_GATEWAY "10.101.1.1"
+#define WIFI_DNS_SERVER "1.1.1.1"
 
 // ----------------- MQTT -----------------
-#define MQTT_HOSTNAME "192.168.1.200"
+#define MQTT_HOSTNAME "10.101.161.207"
 #define MQTT_PORT 1883
-#define MQTT_USERNAME "your_mqtt_username"
-#define MQTT_PASSWORD "your_mqtt_password"
+#define MQTT_USERNAME "mqttuser"
+#define MQTT_PASSWORD "password"
 
 // ----------------- BUZZER -----------------
 #define BUZZER A0
@@ -47,7 +47,7 @@ const String PASSWORD = "1234";
 #define SS_PIN 10
 
 // Static allowed card (you will replace later)
-byte ALLOWED_UID[4] = {0xDE, 0xAD, 0xBE, 0xEF};
+byte ALLOWED_UID[4] = {0x76, 0x15, 0x2C, 0x6A};
 
 // ----------------- LED FUNCTIONS -----------------
 inline void setupLEDs() {

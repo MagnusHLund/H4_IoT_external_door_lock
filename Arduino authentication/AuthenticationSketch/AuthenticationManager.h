@@ -12,16 +12,19 @@ class AuthenticationManager {
       }
 
   public:
-    void PublishAuthenticationResult(bool success) {
-      char* message = CreateAuthenticationResultJson(success);
+    void PublishAuthenticationResult(bool success, bool rfid, bool keypad) {
+      char* message = CreateAuthenticationResultJson(success, rfid, keypad );
       mqttManager.PublishMessage(message);
     }
 
   private:
-    char* CreateAuthenticationResultJson(bool success) {
+    char* CreateAuthenticationResultJson(bool success, bool rfid, bool keypad) {
       StaticJsonDocument<100> doc;
 
-      doc["authenticated"] = success;
+      doc["state_rfid_authenticated"] = success && rfid ? "Authenticated" : "";
+      doc["state_keypad_authenticated"] = success && keypad ? "Authenticated" : "";
+      doc["state_rfid_unauthenticated"] = !success && rfid ? "Unauthenticated" : "";
+      doc["state_keypad_unauthenticated"] = !success && keypad ? "Unauthenticated" : "";
       doc["timestamp"] = millis();
 
       static char buffer[256];
