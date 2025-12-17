@@ -61,7 +61,7 @@ public:
           if (!buttonHoldHandled) {
             if (pairingManager) {
               Serial.println("LED turned GREEN - Triggering pairing - button can be released");
-              pairingManager->PairToHomeAssistant();
+              pairingManager->pairToHomeAssistant();
               buttonHoldHandled = true; // Prevent multiple triggers
             }
           }

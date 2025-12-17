@@ -2,81 +2,81 @@
 #include <ArduinoJson.h>
 
 class MqttManager {
-  char rfid_state_topic[64]; // State of the Arduino's RFID
-  char keypad_state_topic[64]; // State of the Arduino's Keypad
-  char command_topic[64]; // State change from Home Assistant
-  char rfid_discovery_topic[64]; // Used for Home Assistant discovery
-  char keypad_discovery_topic[64];
+  char rfidStateTopic[64]; // State of the Arduino's RFID
+  char keypadStateTopic[64]; // State of the Arduino's Keypad
+  char commandTopic[64]; // State change from Home Assistant
+  char rfidDiscoveryTopic[64]; // Used for Home Assistant discovery
+  char keypadDiscoveryTopic[64];
 
   WiFiClient wifiClient;
   PubSubClient client;
 
   WiFiManager& wiFiManager;
 
-  const char* server_hostname;
-  int server_port;
-  const char* mqtt_username;
-  const char* mqtt_password;
+  const char* serverHostname;
+  int serverPort;
+  const char* mqttUsername;
+  const char* mqttPassword;
 
   public:
-    MqttManager(const char* server_hostname, int server_port, const char* mqtt_username, const char* mqtt_password, WiFiManager& wiFiManager)
-      : client(wifiClient), server_hostname(server_hostname), server_port(server_port), mqtt_username(mqtt_username), mqtt_password(mqtt_password), wiFiManager(wiFiManager) {}
+    MqttManager(const char* serverHostname, int serverPort, const char* mqttUsername, const char* mqttPassword, WiFiManager& wiFiManager)
+      : client(wifiClient), serverHostname(serverHostname), serverPort(serverPort), mqttUsername(mqttUsername), mqttPassword(mqttPassword), wiFiManager(wiFiManager) {}
 
   public:
-    void Connect() {
+    void connect() {
       client.setBufferSize(512);
-      client.setServer(server_hostname, server_port);
+      client.setServer(serverHostname, serverPort);
 
-      EnsureConnectivity();
+      ensureConnectivity();
     }
 
   public:
-    void SetupTopics(const char* mac_address) {
-      snprintf(this->rfid_state_topic, sizeof(this->rfid_state_topic),
-               "homeassistant/binary_sensor/%s/rfid/state", mac_address);
-      snprintf(this->keypad_state_topic, sizeof(this->keypad_state_topic),
-              "homeassistant/binary_sensor/%s/keypad/state", mac_address);
-      snprintf(this->command_topic, sizeof(this->command_topic),
-               "homeassistant/binary_sensor/%s/set", mac_address);
-      snprintf(this->rfid_discovery_topic, sizeof(this->rfid_discovery_topic),
-               "homeassistant/binary_sensor/%s/rfid/config", mac_address);
-      snprintf(this->keypad_discovery_topic, sizeof(this->keypad_discovery_topic),
-               "homeassistant/binary_sensor/%s/keypad/config", mac_address);
+    void setupTopics(const char* macAddress) {
+      snprintf(this->rfidStateTopic, sizeof(this->rfidStateTopic),
+               "homeassistant/binary_sensor/%s/rfid/state", macAddress);
+      snprintf(this->keypadStateTopic, sizeof(this->keypadStateTopic),
+              "homeassistant/binary_sensor/%s/keypad/state", macAddress);
+      snprintf(this->commandTopic, sizeof(this->commandTopic),
+               "homeassistant/binary_sensor/%s/set", macAddress);
+      snprintf(this->rfidDiscoveryTopic, sizeof(this->rfidDiscoveryTopic),
+               "homeassistant/binary_sensor/%s/rfid/config", macAddress);
+      snprintf(this->keypadDiscoveryTopic, sizeof(this->keypadDiscoveryTopic),
+               "homeassistant/binary_sensor/%s/keypad/config", macAddress);
     }
 
   public:
-    const char* GetRfidDiscoveryTopic() {
-      return rfid_discovery_topic;
+    const char* getRfidDiscoveryTopic() {
+      return rfidDiscoveryTopic;
     }
 
   public:
-    const char* GetKeypadDiscoveryTopic() {
-      return keypad_discovery_topic;
+    const char* getKeypadDiscoveryTopic() {
+      return keypadDiscoveryTopic;
     }
 
   public:
-    const char* GetRfidStateTopic() {
-      return rfid_state_topic;
+    const char* getRfidStateTopic() {
+      return rfidStateTopic;
     }
 
   public:
-    const char* GetKeypadStateTopic() {
-      return keypad_state_topic;
+    const char* getKeypadStateTopic() {
+      return keypadStateTopic;
     }
 
   public:
-    const char* GetCommandTopic() {
-      return command_topic;
+    const char* getCommandTopic() {
+      return commandTopic;
     }
 
   public:
-    void EnsureConnectivity() {
+    void ensureConnectivity() {
       while (!client.connected()) {
         Serial.print("Attempting MQTT connection...");
 
-        char* mac_address = wiFiManager.GetMacAddress(true);
+        char* macAddress = wiFiManager.getMacAddress(true);
 
-        if (client.connect(mac_address, mqtt_username, mqtt_password)) {
+        if (client.connect(macAddress, mqttUsername, mqttPassword)) {
           Serial.println("connected");
         } else {
           Serial.print("failed, rc=");
@@ -89,12 +89,12 @@ class MqttManager {
     }
 
   public:
-    void PublishMessage(const char* message, const char* topic = nullptr) {
+    void publishMessage(const char* message, const char* topic = nullptr) {
       bool success = client.publish(topic, message, true);
     }
   
   public:
-    void SetCallback(void (*callback)(char* topic, byte* payload, unsigned int length)) {
+    void setCallback(void (*callback)(char* topic, byte* payload, unsigned int length)) {
       client.setCallback(callback);
     }
 };

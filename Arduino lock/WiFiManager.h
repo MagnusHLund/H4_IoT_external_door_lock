@@ -1,18 +1,18 @@
 #include <WiFiS3.h>
 
 class WiFiManager {
-  const char* wifi_ssid;
-  const char* wifi_password;
+  const char* wifiSsid;
+  const char* wifiPassword;
 
-  IPAddress local_IP;
-  IPAddress dns_server;
+  IPAddress localIP;
+  IPAddress dnsServer;
   IPAddress gateway;
   IPAddress subnet;
 
   public:
-    WiFiManager(const char* wifi_ssid, const char* wifi_password, String local_IP, String gateway, String subnet, String dns_server = "1.1.1.1")
-      : wifi_ssid(wifi_ssid), wifi_password(wifi_password) {
-      if (!this->local_IP.fromString(local_IP)) {
+    WiFiManager(const char* wifiSsid, const char* wifiPassword, String localIP, String gateway, String subnet, String dnsServer = "1.1.1.1")
+      : wifiSsid(wifiSsid), wifiPassword(wifiPassword) {
+      if (!this->localIP.fromString(localIP)) {
         Serial.println("Invalid static IP!");
       }
       if (!this->subnet.fromString(subnet)) {
@@ -21,19 +21,19 @@ class WiFiManager {
       if (!this->gateway.fromString(gateway)) {
         Serial.println("Invalid gateway!");
       }
-      if (!this->dns_server.fromString(dns_server)) {
+      if (!this->dnsServer.fromString(dnsServer)) {
         Serial.println("Invalid DNS!");
       }
     }
 
   public:
-    void Connect() {
+    void connect() {
       delay(10);
       Serial.println("Connecting to WiFi...");
 
-      WiFi.config(local_IP, dns_server, gateway, subnet);
+      WiFi.config(localIP, dnsServer, gateway, subnet);
 
-      WiFi.begin(wifi_ssid, wifi_password);
+      WiFi.begin(wifiSsid, wifiPassword);
 
       while (WiFi.status() != WL_CONNECTED) {
         delay(500);
@@ -46,20 +46,20 @@ class WiFiManager {
     }
 
   public:
-    void EnsureConnectivity() {
+    void ensureConnectivity() {
       if (WiFi.status() != WL_CONNECTED) {
         Serial.println("WiFi lost, reconnecting...");
-        Connect();
+        connect();
       }
     }
 
   public:
-    char* GetMacAddress(bool remove_colons = false) {
+    char* getMacAddress(bool removeColons = false) {
       static char macStr[18];
       byte mac[6];
       WiFi.macAddress(mac);
     
-      if (remove_colons) {
+      if (removeColons) {
         snprintf(macStr, sizeof(macStr), "%02X%02X%02X%02X%02X%02X",
                  mac[0], mac[1], mac[2], mac[3], mac[4], mac[5]);
       } else {

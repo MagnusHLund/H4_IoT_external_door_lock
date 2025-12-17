@@ -12,13 +12,13 @@ class AuthenticationManager {
       }
 
   public:
-    void PublishAuthenticationResult(bool success, bool rfid, bool keypad) {
-      char* message = CreateAuthenticationResultJson(success, rfid, keypad );
-      mqttManager.PublishMessage(message);
+    void publishAuthenticationResult(bool success, bool rfid, bool keypad) {
+      char* message = createAuthenticationResultJson(success, rfid, keypad );
+      mqttManager.publishMessage(message);
     }
 
   private:
-    char* CreateAuthenticationResultJson(bool success, bool rfid, bool keypad) {
+    char* createAuthenticationResultJson(bool success, bool rfid, bool keypad) {
       StaticJsonDocument<100> doc;
 
       doc["state_rfid_authenticated"] = success && rfid ? "Authenticated" : "";

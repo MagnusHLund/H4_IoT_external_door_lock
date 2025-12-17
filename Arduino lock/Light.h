@@ -6,26 +6,26 @@ class Light {
     } 
 
   public:
-    void Init() {
+    void init() {
       pinMode(light_pin, OUTPUT);
     }
 
   public:
-    void TurnOn() {
+    void turnOn() {
       digitalWrite(light_pin, HIGH);
     }
 
   public:
-    void TurnOff() {
+    void turnOff() {
       digitalWrite(light_pin, LOW);
     }
 
   public:
-    void Blink(unsigned long interval, int blink_amount) {
+    void blink(unsigned long interval, int blink_amount) {
       for (int i = 0; i < blink_amount; i++) {
-        TurnOn();
+        turnOn();
         delay(interval);
-        TurnOff();
+        turnOff();
         delay(interval);
       }
     }
