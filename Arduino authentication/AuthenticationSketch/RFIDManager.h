@@ -8,6 +8,11 @@
 class AuthenticationManager;
 
 class RFIDManager {
+private:
+  unsigned long unlockTime = 0;
+  bool isUnlocked = false;
+  const unsigned long lockDelay = 10000; // 10 seconds
+
 public:
   MqttManager& mqttManager;
   MFRC522 rfid = MFRC522(SS_PIN, RST_PIN);
@@ -32,6 +37,16 @@ public:
   }
 
   void update() {
+    // Check if door should auto-lock after 10 seconds (check this first, always)
+    if (isUnlocked && (millis() - unlockTime >= lockDelay)) {
+      Serial.println("RFID: Auto-locking after 10 seconds");
+      isUnlocked = false;
+      showError(); // Show locked state
+      if (authManager) {
+        mqttManager.PublishMessage("Unauthenticated", mqttManager.GetRfidStateTopic());
+      }
+    }
+    
     if (!rfid.PICC_IsNewCardPresent() || !rfid.PICC_ReadCardSerial())
       return;
 
@@ -46,6 +61,8 @@ public:
       Serial.println("RFID: Card Accepted");
       beepSuccess();
       showSuccess();
+      isUnlocked = true;
+      unlockTime = millis();
       if (authManager) {
         mqttManager.PublishMessage("Authenticated", mqttManager.GetRfidStateTopic());
       } 

@@ -7,6 +7,10 @@
 class AuthenticationManager;
 
 class KeypadManager {
+private:
+  unsigned long unlockTime = 0;
+  bool isUnlocked = false;
+  const unsigned long lockDelay = 10000; // 10 seconds
 
   
   public:
@@ -26,6 +30,16 @@ class KeypadManager {
   }
 
   void update() {
+    // Check if door should auto-lock after 10 seconds (check this first, always)
+    if (isUnlocked && (millis() - unlockTime >= lockDelay)) {
+      Serial.println("Keypad: Auto-locking after 10 seconds");
+      isUnlocked = false;
+      showError(); // Show locked state
+      if (authManager) {
+        mqttManager.PublishMessage("Unauthenticated", mqttManager.GetKeypadStateTopic());
+      }
+    }
+    
     char key = keypad.getKey();
     if (!key) return;
 
@@ -39,6 +53,8 @@ class KeypadManager {
         Serial.println("Keypad: Correct");
         beepSuccess();
         showSuccess();
+        isUnlocked = true;
+        unlockTime = millis();
         if (authManager) {
           mqttManager.PublishMessage("Authenticated", mqttManager.GetKeypadStateTopic());
         }
