@@ -77,7 +77,6 @@ class MqttManager {
 
         if (client.connect(clientId.c_str(), mqtt_username, mqtt_password)) {
           Serial.println("connected");
-          client.subscribe(GetCommandTopic()); 
         } else {
           Serial.print("failed, rc=");
           Serial.print(client.state());
