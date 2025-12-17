@@ -11,14 +11,16 @@ class MqttManager {
   WiFiClient wifiClient;
   PubSubClient client;
 
+  WiFiManager& wiFiManager;
+
   const char* server_hostname;
   int server_port;
   const char* mqtt_username;
   const char* mqtt_password;
 
   public:
-    MqttManager(const char* server_hostname, int server_port, const char* mqtt_username, const char* mqtt_password)
-      : client(wifiClient), server_hostname(server_hostname), server_port(server_port), mqtt_username(mqtt_username), mqtt_password(mqtt_password) {}
+    MqttManager(const char* server_hostname, int server_port, const char* mqtt_username, const char* mqtt_password, WiFiManager& wiFiManager)
+      : client(wifiClient), server_hostname(server_hostname), server_port(server_port), mqtt_username(mqtt_username), mqtt_password(mqtt_password), wiFiManager(wiFiManager) {}
 
   public:
     void Connect() {
@@ -72,10 +74,9 @@ class MqttManager {
       while (!client.connected()) {
         Serial.print("Attempting MQTT connection...");
 
-        String clientId = "ArduinoClient-";
-        clientId += String(random(0xffff), HEX);
+        char* mac_address = wiFiManager.GetMacAddress(true);
 
-        if (client.connect(clientId.c_str(), mqtt_username, mqtt_password)) {
+        if (client.connect(mac_address, mqtt_username, mqtt_password)) {
           Serial.println("connected");
         } else {
           Serial.print("failed, rc=");
@@ -83,7 +84,7 @@ class MqttManager {
           Serial.println(" try again in 5 seconds");
           delay(5000);
         }
-      }
+      } 
       client.loop(); // Keep alive
     }
 

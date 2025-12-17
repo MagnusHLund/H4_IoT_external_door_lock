@@ -10,7 +10,7 @@
 #include "ButtonManager.h"
 
 WiFiManager wiFiManager(WIFI_SSID, WIFI_PASSWORD, WIFI_STATIC_IP, WIFI_GATEWAY, WIFI_SUBNET_MASK, WIFI_DNS_SERVER);
-MqttManager mqttManager(MQTT_HOSTNAME, MQTT_PORT, MQTT_USERNAME, MQTT_PASSWORD);
+MqttManager mqttManager(MQTT_HOSTNAME, MQTT_PORT, MQTT_USERNAME, MQTT_PASSWORD, wiFiManager);
 
 AuthenticationManager authenticationManager(mqttManager);
 Pairing pairing(wiFiManager, mqttManager);

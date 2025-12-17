@@ -4,7 +4,7 @@
 // ----------------- WIFI -----------------
 #define WIFI_SSID "Lab-ZBC"
 #define WIFI_PASSWORD "Prestige#PuzzledCASH48!"
-#define WIFI_STATIC_IP "10.101.161.42"
+#define WIFI_STATIC_IP "10.101.161.52"
 #define WIFI_SUBNET_MASK "255.255.0.0"
 #define WIFI_GATEWAY "10.101.1.1"
 #define WIFI_DNS_SERVER "1.1.1.1"
