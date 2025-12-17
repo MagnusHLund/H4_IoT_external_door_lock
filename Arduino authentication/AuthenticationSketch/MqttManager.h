@@ -31,15 +31,15 @@ class MqttManager {
   public:
     void SetupTopics(const char* mac_address) {
       snprintf(this->rfid_state_topic, sizeof(this->rfid_state_topic),
-               "homeassistant/lock_authentication/%s/rfid/state", mac_address);
+               "homeassistant/binary_sensor/%s/rfid/state", mac_address);
       snprintf(this->keypad_state_topic, sizeof(this->keypad_state_topic),
-              "homeassistant/lock_authentication/%s/keypad/state", mac_address);
+              "homeassistant/binary_sensor/%s/keypad/state", mac_address);
       snprintf(this->command_topic, sizeof(this->command_topic),
-               "homeassistant/lock_authentication/%s/set", mac_address);
+               "homeassistant/binary_sensor/%s/set", mac_address);
       snprintf(this->rfid_discovery_topic, sizeof(this->rfid_discovery_topic),
-               "homeassistant/lock_authentication/%s/rfid/config", mac_address);
+               "homeassistant/binary_sensor/%s/rfid/config", mac_address);
       snprintf(this->keypad_discovery_topic, sizeof(this->keypad_discovery_topic),
-               "homeassistant/lock_authentication/%s/keypad/config", mac_address);
+               "homeassistant/binary_sensor/%s/keypad/config", mac_address);
     }
 
   public:
@@ -90,10 +90,6 @@ class MqttManager {
 
   public:
     void PublishMessage(const char* message, const char* topic = nullptr) {
-      if(topic == nullptr) {
-        topic = rfid_state_topic;
-      }
-
       bool success = client.publish(topic, message, true);
     }
   

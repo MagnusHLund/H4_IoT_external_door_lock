@@ -40,8 +40,11 @@ class Pairing {
 
       doc["name"]           = name;
       doc["unique_id"]      = String(mac_address) + "_" + name; 
+      doc["object_id"]      = String(mac_address) + "_" + name; 
       doc["state_topic"]    = state_topic;
-      doc["device_class"]   = "connectivity";
+      doc["device_class"]   = "lock";
+      doc["payload_on"]     = "Authenticated";
+      doc["payload_off"]    = "Unauthenticated";
 
       JsonObject device = doc.createNestedObject("device");
       device["identifiers"] = mac_address;
