@@ -50,6 +50,7 @@ class Pairing {
       device["identifiers"] = mac_address;
       device["manufacturer"] = "Arduino";
       device["model"] = "Uno R4 WiFi";
+      device["name"] = "Door authentication";
 
       static char buffer[512];
       serializeJson(doc, buffer);
