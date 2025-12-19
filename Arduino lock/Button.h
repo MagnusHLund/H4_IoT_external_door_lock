@@ -8,20 +8,20 @@ class Button {
     Button(int pin) : pin(pin) {}
 
   public:
-    void Init() {
+    void init() {
       pinMode(pin, INPUT_PULLUP);
     }
 
   // Check if button is currently pressed
   public:
-    bool IsPressed() {
+    bool isPressed() {
       return digitalRead(pin) == LOW;
     }
 
   // Check if button has been held for given ms
   public:
-    bool IsHeld(unsigned long durationMs) {
-      if (IsPressed()) {
+    bool isHeld(unsigned long durationMs) {
+      if (isPressed()) {
         if (pressStart == 0) {
           pressStart = millis(); // first press
           heldTriggered = false;

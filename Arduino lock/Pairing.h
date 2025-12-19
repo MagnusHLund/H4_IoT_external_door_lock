@@ -10,50 +10,50 @@ class Pairing {
       : wiFiManager(wiFiManager), mqttManager(mqttManager), button(button), light(light) {}
 
   public:
-    void Init() {
-      button.Init();
-      light.Init();
+    void init() {
+      button.init();
+      light.init();
 
-      PairToHomeAssistant();
+      pairToHomeAssistant();
     }
 
   public:
-    void HandlePairingButton() {
+    void handlePairingButton() {
       int fiveSeconds = 5000;
 
-      if (button.IsHeld(fiveSeconds)) {
-        PairToHomeAssistant();
-        light.Blink(125, 5);
+      if (button.isHeld(fiveSeconds)) {
+        pairToHomeAssistant();
+        light.blink(125, 5);
       }
     }
 
   public:
-    void PairToHomeAssistant() {
-      char* mac_address = wiFiManager.GetMacAddress(true);
-      char* message = formatDiscoveryMessageJson(mac_address);
+    void pairToHomeAssistant() {
+      char* macAddress = wiFiManager.getMacAddress(true);
+      char* message = formatDiscoveryMessageJson(macAddress);
 
-      mqttManager.PublishMessage(message, mqttManager.GetDiscoveryTopic());
+      mqttManager.publishMessage(message, mqttManager.getDiscoveryTopic());
       Serial.println("Sent discovery message");
     }
 
   private:
-    char* formatDiscoveryMessageJson(char* mac_address) {
+    char* formatDiscoveryMessageJson(char* macAddress) {
       StaticJsonDocument<512> doc;
 
-      const char* command_topic = mqttManager.GetCommandTopic();
-      const char* state_topic = mqttManager.GetStateTopic();
+      const char* commandTopic = mqttManager.getCommandTopic();
+      const char* stateTopic = mqttManager.getStateTopic();
 
       doc["name"]           = "Arduino Door Lock";
-      doc["unique_id"]      = mac_address; 
-      doc["command_topic"]  = command_topic;
-      doc["state_topic"]    = state_topic;
+      doc["unique_id"]      = macAddress; 
+      doc["command_topic"]  = commandTopic;
+      doc["state_topic"]    = stateTopic;
       doc["payload_unlock"] = "UNLOCK";
       doc["payload_lock"]   = "LOCK";
       doc["state_unlocked"] = "UNLOCKED";
       doc["state_locked"]   = "LOCKED";
 
       JsonObject device = doc.createNestedObject("device");
-      device["identifiers"] = mac_address;
+      device["identifiers"] = macAddress;
       device["manufacturer"] = "Arduino";
       device["model"] = "Uno R4 WiFi";
 

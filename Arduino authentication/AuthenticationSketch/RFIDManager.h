@@ -43,7 +43,7 @@ public:
       isUnlocked = false;
       showError(); // Show locked state
       if (authManager) {
-        mqttManager.PublishMessage("Unauthenticated", mqttManager.GetRfidStateTopic());
+        mqttManager.publishMessage("Unauthenticated", mqttManager.getRfidStateTopic());
       }
     }
     
@@ -64,13 +64,13 @@ public:
       isUnlocked = true;
       unlockTime = millis();
       if (authManager) {
-        mqttManager.PublishMessage("Authenticated", mqttManager.GetRfidStateTopic());
+        mqttManager.publishMessage("Authenticated", mqttManager.getRfidStateTopic());
       } 
     } else {
       Serial.println("RFID: Wrong Card");
       beepFail();
       showError();
-      if (authManager) authManager->PublishAuthenticationResult(false, true, false); // Do not need
+      if (authManager) authManager->publishAuthenticationResult(false, true, false); // Do not need
     }
 
     rfid.PICC_HaltA();

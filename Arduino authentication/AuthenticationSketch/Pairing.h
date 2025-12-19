@@ -10,8 +10,8 @@ class Pairing {
       : wiFiManager(wiFiManager), mqttManager(mqttManager) {}
 
   public:
-    void Init() {
-      PairToHomeAssistant();
+    void init() {
+      pairToHomeAssistant();
       // Blink LED 5 times to indicate pairing sent
       for (int i = 0; i < 5; i++) {
         digitalWrite(BLUE_PIN, HIGH);
@@ -22,32 +22,32 @@ class Pairing {
     }
 
   public:
-    void PairToHomeAssistant() {
-      char* mac_address = wiFiManager.GetMacAddress(true);
+    void pairToHomeAssistant() {
+      char* macAddress = wiFiManager.getMacAddress(true);
 
-      char* message = formatDiscoveryMessageJson(mac_address,  "rfid", "{{ value_json.rfid_authenticated }}", mqttManager.GetRfidStateTopic());
-      mqttManager.PublishMessage(message, mqttManager.GetRfidDiscoveryTopic());
+      char* message = formatDiscoveryMessageJson(macAddress,  "rfid", "{{ value_json.rfid_authenticated }}", mqttManager.getRfidStateTopic());
+      mqttManager.publishMessage(message, mqttManager.getRfidDiscoveryTopic());
 
-      message = formatDiscoveryMessageJson(mac_address, "keypad", "{{ value_json.keypad_authenticated }}", mqttManager.GetKeypadStateTopic());
-      mqttManager.PublishMessage(message, mqttManager.GetKeypadDiscoveryTopic());
+      message = formatDiscoveryMessageJson(macAddress, "keypad", "{{ value_json.keypad_authenticated }}", mqttManager.getKeypadStateTopic());
+      mqttManager.publishMessage(message, mqttManager.getKeypadDiscoveryTopic());
 
       Serial.println("Sent discovery message");
     }
 
   private:
-    char* formatDiscoveryMessageJson(char* mac_address, const char* name, const char* templateStr, const char* state_topic) {
+    char* formatDiscoveryMessageJson(char* macAddress, const char* name, const char* templateStr, const char* stateTopic) {
       StaticJsonDocument<512> doc;
 
       doc["name"]           = name;
-      doc["unique_id"]      = String(mac_address) + "_" + name; 
-      doc["object_id"]      = String(mac_address) + "_" + name; 
-      doc["state_topic"]    = state_topic;
+      doc["unique_id"]      = String(macAddress) + "_" + name; 
+      doc["object_id"]      = String(macAddress) + "_" + name; 
+      doc["state_topic"]    = stateTopic;
       doc["device_class"]   = "lock";
       doc["payload_on"]     = "Authenticated";
       doc["payload_off"]    = "Unauthenticated";
 
       JsonObject device = doc.createNestedObject("device");
-      device["identifiers"] = mac_address;
+      device["identifiers"] = macAddress;
       device["manufacturer"] = "Arduino";
       device["model"] = "Uno R4 WiFi";
       device["name"] = "Door authentication";

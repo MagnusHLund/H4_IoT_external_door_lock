@@ -36,7 +36,7 @@ private:
       isUnlocked = false;
       showError(); // Show locked state
       if (authManager) {
-        mqttManager.PublishMessage("Unauthenticated", mqttManager.GetKeypadStateTopic());
+        mqttManager.publishMessage("Unauthenticated", mqttManager.getKeypadStateTopic());
       }
     }
     
@@ -56,13 +56,13 @@ private:
         isUnlocked = true;
         unlockTime = millis();
         if (authManager) {
-          mqttManager.PublishMessage("Authenticated", mqttManager.GetKeypadStateTopic());
+          mqttManager.publishMessage("Authenticated", mqttManager.getKeypadStateTopic());
         }
       } else {
         Serial.println("Keypad: Incorrect");
         beepFail();
         showError();
-        if (authManager) authManager->PublishAuthenticationResult(false, false, true); // do not need
+        if (authManager) authManager->publishAuthenticationResult(false, false, true); // do not need
       }
       inputPassword = "";
     }

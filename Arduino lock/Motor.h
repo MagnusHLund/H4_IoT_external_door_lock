@@ -8,14 +8,14 @@ class Motor {
     Motor(int motor_pin) : motor_pin(motor_pin) { }
 
   public:
-    void Init() {
+    void init() {
       // The servo can not attach a pin before running the Setup function within the ino file.
       // Therefore it cant be placed within the constructor.
       servo.attach(motor_pin);
     }
 
   public:
-    void TurnDegrees(int degrees) {
+    void turnDegrees(int degrees) {
       servo.write(degrees);
     }
 };

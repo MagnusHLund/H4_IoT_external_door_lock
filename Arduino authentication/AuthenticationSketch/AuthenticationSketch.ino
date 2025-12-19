@@ -26,11 +26,11 @@ void setup() {
   pinMode(BUZZER, OUTPUT);
   setupLEDs();
 
-  wiFiManager.Connect();
-  mqttManager.Connect();
+  wiFiManager.connect();
+  mqttManager.connect();
 
-  const char* mac_address = wiFiManager.GetMacAddress(true);
-  mqttManager.SetupTopics(mac_address);
+  const char* macAddress = wiFiManager.getMacAddress(true);
+  mqttManager.setupTopics(macAddress);
 
   keypadManager.setup();
   rfidManager.setup();
@@ -44,15 +44,15 @@ void setup() {
   buttonManager.setPairingManager(&pairing);
   
   // Initialize pairing (sends initial discovery message)
-  pairing.Init();
+  pairing.init();
 }
 
 void loop() {
-  mqttManager.EnsureConnectivity();
+  mqttManager.ensureConnectivity();
 
   // WiFi can be kept alive less often than MQTT
   if (millis() - lastCheck > 5000) {
-    wiFiManager.EnsureConnectivity();
+    wiFiManager.ensureConnectivity();
     lastCheck = millis();
   }
 

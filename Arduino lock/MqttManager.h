@@ -2,67 +2,67 @@
 #include <ArduinoJson.h>
 
 class MqttManager {
-  char state_topic[64]; // State of the Arduino
-  char command_topic[64]; // State change from Home Assistant
-  char discovery_topic[64]; // Used for Home Assistant discovery
+  char stateTopic[64]; // State of the Arduino
+  char commandTopic[64]; // State change from Home Assistant
+  char discoveryTopic[64]; // Used for Home Assistant discovery
 
   WiFiClient wifiClient;
   PubSubClient client;
 
   WiFiManager& wiFiManager;
 
-  const char* server_hostname;
-  int server_port;
-  const char* mqtt_username;
-  const char* mqtt_password;
+  const char* serverHostname;
+  int serverPort;
+  const char* mqttUsername;
+  const char* mqttPassword;
 
   public:
-    MqttManager(const char* server_hostname, int server_port, const char* mqtt_username, const char* mqtt_password, WiFiManager& wiFiManager)
-      : client(wifiClient), server_hostname(server_hostname), server_port(server_port), mqtt_username(mqtt_username), mqtt_password(mqtt_password), wiFiManager(wiFiManager) {}
+    MqttManager(const char* serverHostname, int serverPort, const char* mqttUsername, const char* mqttPassword, WiFiManager& wiFiManager)
+      : client(wifiClient), serverHostname(serverHostname), serverPort(serverPort), mqttUsername(mqttUsername), mqttPassword(mqttPassword), wiFiManager(wiFiManager) {}
 
   public:
-    void Connect() {
+    void connect() {
       client.setBufferSize(512);
-      client.setServer(server_hostname, server_port);
+      client.setServer(serverHostname, serverPort);
 
-      EnsureConnectivity();
+      ensureConnectivity();
     }
 
   public:
-    void SetupTopics(const char* mac_address) {
-      snprintf(this->state_topic, sizeof(this->state_topic),
-               "homeassistant/lock/%s/state", mac_address);
-      snprintf(this->command_topic, sizeof(this->command_topic),
-               "homeassistant/lock/%s/set", mac_address);
-      snprintf(this->discovery_topic, sizeof(this->discovery_topic),
-               "homeassistant/lock/%s/config", mac_address);
+    void setupTopics(const char* macAddress) {
+      snprintf(this->stateTopic, sizeof(this->stateTopic),
+               "homeassistant/lock/%s/state", macAddress);
+      snprintf(this->commandTopic, sizeof(this->commandTopic),
+               "homeassistant/lock/%s/set", macAddress);
+      snprintf(this->discoveryTopic, sizeof(this->discoveryTopic),
+               "homeassistant/lock/%s/config", macAddress);
     }
 
   public:
-    const char* GetDiscoveryTopic() {
-      return discovery_topic;
+    const char* getDiscoveryTopic() {
+      return discoveryTopic;
     }
 
   public:
-    const char* GetStateTopic() {
-      return state_topic;
+    const char* getStateTopic() {
+      return stateTopic;
     }
 
   public:
-    const char* GetCommandTopic() {
-      return command_topic;
+    const char* getCommandTopic() {
+      return commandTopic;
     }
 
   public:
-    void EnsureConnectivity() {
+    void ensureConnectivity() {
       while (!client.connected()) {
         Serial.print("Attempting MQTT connection...");
 
-        char* mac_address = wiFiManager.GetMacAddress(true);
+        char* macAddress = wiFiManager.getMacAddress(true);
 
-        if (client.connect(mac_address, mqtt_username, mqtt_password)) {
+        if (client.connect(macAddress, mqttUsername, mqttPassword)) {
           Serial.println("connected");
-          client.subscribe(GetCommandTopic()); 
+          client.subscribe(getCommandTopic()); 
         } else {
           Serial.print("failed, rc=");
           Serial.print(client.state());
@@ -74,16 +74,16 @@ class MqttManager {
     }
 
   public:
-    void PublishMessage(const char* message, const char* topic = nullptr) {
+    void publishMessage(const char* message, const char* topic = nullptr) {
       if(topic == nullptr) {
-        topic = state_topic;
+        topic = stateTopic;
       }
 
       bool success = client.publish(topic, message, true);
     }
   
   public:
-    void SetCallback(void (*callback)(char* topic, byte* payload, unsigned int length)) {
+    void setCallback(void (*callback)(char* topic, byte* payload, unsigned int length)) {
       client.setCallback(callback);
     }
 };

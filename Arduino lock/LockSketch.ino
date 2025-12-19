@@ -22,24 +22,24 @@ unsigned long lastCheck = 0;
 void setup() {
   Serial.begin(9600);
 
-  wiFiManager.Connect();
-  mqttManager.Connect();
+  wiFiManager.connect();
+  mqttManager.connect();
 
-  const char* mac_address = wiFiManager.GetMacAddress(true);
-  mqttManager.SetupTopics(mac_address);
+  const char* macAddress = wiFiManager.getMacAddress(true);
+  mqttManager.setupTopics(macAddress);
 
-  lockController.Init();
-  pairing.Init();
+  lockController.init();
+  pairing.init();
 }
 
 void loop() {
-  mqttManager.EnsureConnectivity();
+  mqttManager.ensureConnectivity();
 
   // WiFi can be kept alive left often than MQTT
   if (millis() - lastCheck > 5000) {
-    wiFiManager.EnsureConnectivity();
+    wiFiManager.ensureConnectivity();
     lastCheck = millis();
   }
 
-  pairing.HandlePairingButton();
+  pairing.handlePairingButton();
 }

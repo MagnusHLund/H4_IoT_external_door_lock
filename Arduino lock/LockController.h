@@ -13,47 +13,47 @@ class LockController {
       }
 
   public:
-    void Init() {
-      motor.Init();
+    void init() {
+      motor.init();
 
-      mqttManager.SetCallback(StaticCallback);
+      mqttManager.setCallback(staticCallback);
     }
 
   public:
-    static void StaticCallback(char* topic, byte* payload, unsigned int length) {
+    static void staticCallback(char* topic, byte* payload, unsigned int length) {
       if (instance) {
-        instance->UpdateLockState(topic, payload, length);
+        instance->updateLockState(topic, payload, length);
       }
     }
 
   private:
-    void UpdateLockState(char* topic, byte* payload, unsigned int length) {
+    void updateLockState(char* topic, byte* payload, unsigned int length) {
       char message[64];
 
       memcpy(message, payload, length);
       message[length] = '\0'; // terminate string
 
       if (strcmp(message, "LOCK") == 0) {
-        LockDoor();
+        lockDoor();
       } else if (strcmp(message, "UNLOCK") == 0) {
-        UnlockDoor();
+        unlockDoor();
       } else {
         Serial.println("Unknown command");
       }
     }
 
   private: 
-    void LockDoor() {
-      motor.TurnDegrees(0);
+    void lockDoor() {
+      motor.turnDegrees(0);
 
-      mqttManager.PublishMessage("LOCKED");
+      mqttManager.publishMessage("LOCKED");
     }
 
   private:
-    void UnlockDoor() {
-      motor.TurnDegrees(90);
+    void unlockDoor() {
+      motor.turnDegrees(90);
 
-      mqttManager.PublishMessage("UNLOCKED");
+      mqttManager.publishMessage("UNLOCKED");
     }
 };
 
